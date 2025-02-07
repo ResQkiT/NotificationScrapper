@@ -166,6 +166,7 @@
             <artifactId>wiremock-standalone</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -274,7 +275,7 @@
                         <dependency>
                             <groupId>com.github.spotbugs</groupId>
                             <artifactId>spotbugs</artifactId>
-                            <version>${spotbugs.version}</version>
+
                         </dependency>
                     </dependencies>
                 </plugin>
