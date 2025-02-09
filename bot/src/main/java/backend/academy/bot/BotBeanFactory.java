@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class BotConfigFactory {
+public class BotBeanFactory {
 
     private final BotConfig botConfig;
 
     @Autowired
-    public BotConfigFactory(BotConfig botConfig) {
+    public BotBeanFactory(BotConfig botConfig) {
         this.botConfig = botConfig;
     }
 

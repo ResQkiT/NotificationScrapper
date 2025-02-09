@@ -1,15 +1,24 @@
 package backend.academy.bot.commands;
 
+import backend.academy.bot.service.TelegramBotService;
+import backend.academy.bot.session.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class UndefinedCommand extends Command<String, Object>{
+public class UndefinedCommand extends Command {
 
     @Override
-    public String execute(Object object) {
-        log.debug("Undefined command");
-        return "Я не знаю такую команду";
+    public String getName() {
+        return "undefined";
+    }
+
+    @Override
+    public void execute(Session session, Object args) {
+        log.debug("Undefined command received");
+
+        String message = "Я не знаю такую команду. Используйте /help, чтобы увидеть доступные команды.";
+        sendMessage(session.chatId(), message);
     }
 }
