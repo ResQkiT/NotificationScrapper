@@ -3,7 +3,7 @@ package backend.academy.bot.service;
 import backend.academy.bot.commands.CommandFactory;
 import backend.academy.bot.events.SendMessageEvent;
 import backend.academy.bot.repository.SessionRepository;
-import backend.academy.bot.session.Session;
+import backend.academy.bot.entity.Session;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
@@ -14,9 +14,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,9 +26,6 @@ public class TelegramBotService {
 
     @NotNull
     private final TelegramBot telegramBot;
-
-    @NotNull
-    private final ApplicationContext context;
 
     @NotNull
     private final SessionRepository sessionRepository;
@@ -52,22 +50,43 @@ public class TelegramBotService {
         Message message = update.message();
         String messageText = message.text().toLowerCase();
 
-        String[] parts = messageText.split(" ", 2);
-        String rawCommand = parts[0];
-        String args = (parts.length > 1) ? parts[1] : "";
+        Long chatId = message.chat().id();
+        User user = message.from();
 
-        Long chatId = update.message().chat().id();
+        Session session;
+        if (!sessionRepository.isSessionValid(chatId)){
+            session = sessionRepository.createSession(chatId, user);
+        }else{
+            session = sessionRepository.getSession(chatId);
+        }
 
-        Session session = sessionRepository.validateSession(chatId);
+        switch (session.state()){
+            case DEFAULT ->{
+                String[] parts = messageText.split(" ", 2);
+                String rawCommand = parts[0];
+                String args = (parts.length > 1) ? parts[1] : "";
+                commandFactory.getCommand(rawCommand).execute(session, args);
+            }
+            case WAITING_FOR_TAGS -> {
+                //парсим теги из строки
+                String[] tags = messageText.split(",");
+                List<String> list = Arrays.asList(tags);
+                commandFactory.getCommand("/track").execute(session, list);
+            }
+            case WAITING_FOR_FILTERS ->{
+                String[] filters = messageText.split(",");
+                List<String> list = Arrays.asList(filters);
+                commandFactory.getCommand("/track").execute(session, list);
+            }
+        }
 
-        commandFactory.getCommand(rawCommand).execute(session, args);
     }
 
     public void sendMessage(Long chatId, String text) {
         telegramBot.execute(new SendMessage(chatId, text));
     }
 
-    //не знаб насколько такой подход верный, мне нужно было как то порвать циклическую зависимость
+    //не знаю насколько такой подход верный, мне нужно было как то порвать циклическую зависимость
     //TgService -> CommandFactory -> Command -> TgService
     @EventListener
     public void handleSendMassage(SendMessageEvent event) {

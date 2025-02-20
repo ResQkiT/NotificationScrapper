@@ -1,7 +1,5 @@
-package backend.academy.bot.repository;
+package backend.academy.scrapper.repository;
 
-import com.pengrad.telegrambot.model.User;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import java.util.HashSet;
 import java.util.Optional;
@@ -48,10 +46,5 @@ public class UserRepository {
 
     public int getUserCount() {
         return userSet.size();
-    }
-
-    @PostConstruct
-    void post_construct(){
-        log.info("Repository created");
     }
 }

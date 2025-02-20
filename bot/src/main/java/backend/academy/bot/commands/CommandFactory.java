@@ -9,18 +9,17 @@ import java.util.stream.Collectors;
 
 @Component
 public class CommandFactory {
+
     private final Map<String, Command> commandMap;
-    private final UndefinedCommand undefinedCommand;
 
     @Autowired
     @Lazy
-    public CommandFactory(List<Command> commands, UndefinedCommand undefinedCommand) {
-        this.undefinedCommand = undefinedCommand;
+    public CommandFactory(List<Command> commands) {
         commandMap = commands.stream().collect(Collectors.toMap(Command::getName, cmd -> cmd));
     }
 
     public Command getCommand(String rawCommand) {
-        return commandMap.getOrDefault(rawCommand, undefinedCommand);
+        return commandMap.getOrDefault(rawCommand, commandMap.get("undefined"));
     }
 }
 

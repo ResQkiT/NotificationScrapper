@@ -1,0 +1,38 @@
+package backend.academy.bot.service;
+
+import backend.academy.bot.dto.IncomingUpdate;
+import backend.academy.bot.events.SendMessageEvent;
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.client.WebClient;
+
+@Slf4j
+@RestController
+public class WebService {
+
+    @NotNull
+    private final ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    public WebService(ApplicationEventPublisher eventPublisher, WebClient.Builder webClientBuilder) {
+        this.eventPublisher = eventPublisher;
+    }
+
+    @PostMapping("/update")
+    public void update(@RequestBody IncomingUpdate update){
+        log.info("New http request");
+
+        for (Long chatId : update.tgChatIds()) {
+            StringBuilder message = new StringBuilder();
+            message.append("Изменение на странице: ").append(update.url()).append("\n")
+                .append(" Описание: ").append(update.description());
+
+            eventPublisher.publishEvent(new SendMessageEvent(chatId, message.toString()));
+        }
+    }
+}

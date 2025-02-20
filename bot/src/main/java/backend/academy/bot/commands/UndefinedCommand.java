@@ -1,7 +1,6 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.service.TelegramBotService;
-import backend.academy.bot.session.Session;
+import backend.academy.bot.entity.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

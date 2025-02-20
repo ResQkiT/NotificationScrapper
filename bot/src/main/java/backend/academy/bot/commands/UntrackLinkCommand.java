@@ -1,7 +1,6 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.service.TelegramBotService;
-import backend.academy.bot.session.Session;
+import backend.academy.bot.entity.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +15,18 @@ public class UntrackLinkCommand extends Command {
 
     @Override
     public void execute(Session session, Object args) {
-        if (!(args instanceof String link) || link.isEmpty()) {
+        if (!(args instanceof String url) || url.isEmpty()) {
             sendMessage(session.chatId(), "Ошибка: укажите ссылку для удаления.");
             return;
         }
 
-        // TODO: Логика для удаления ссылки, например:
-        // boolean removed = linkRepository.removeLink(session.getUserId(), link);
+        if(!session.hasLink(url)){
+            sendMessage(session.chatId(),"Такой ссылки не существует");
+            return;
+        }
 
-        // Если ссылка успешно удалена, то сообщение будет таким:
-        // telegramBotService.sendMessage(session.chatId(), "Ссылка " + link + " удалена.");
+        session.removeLink(url);
 
-        // Временно возвращаем строку
-        sendMessage(session.chatId(), "Тут будет реализована машина состояний. Команда для удаления ссылки");
+        sendMessage(session.chatId(), "Ссылка " + url + " удалена из отслеживаемых");
     }
 }
