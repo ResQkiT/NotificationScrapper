@@ -9,8 +9,13 @@ import org.springframework.stereotype.Component;
 public class HelpCommand extends Command {
 
     @Override
-    public String getName() {
+    public String command() {
         return "/help";
+    }
+
+    @Override
+    public String description() {
+        return "Выводит меню с доступными командами";
     }
 
     @Override

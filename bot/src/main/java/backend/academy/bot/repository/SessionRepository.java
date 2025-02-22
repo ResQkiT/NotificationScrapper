@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class SessionRepository {
 
-    //тут сохраняются все текущие живые сессии, планирую хранить около часа, типо кеш инфа о пользователе
     private final Map<Long, Session> sessions = new ConcurrentHashMap<>();
 
     public Session getSession(Long chatId){

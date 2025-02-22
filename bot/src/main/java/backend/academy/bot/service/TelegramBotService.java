@@ -1,21 +1,26 @@
 package backend.academy.bot.service;
 
+import backend.academy.bot.commands.Command;
 import backend.academy.bot.commands.CommandFactory;
 import backend.academy.bot.events.SendMessageEvent;
 import backend.academy.bot.repository.SessionRepository;
 import backend.academy.bot.entity.Session;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
+import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
+
+import com.pengrad.telegrambot.request.SetMyCommands;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +41,7 @@ public class TelegramBotService {
     @PostConstruct
     public void start(){
         log.info("Bot started");
+        setBotCommands();
         telegramBot.setUpdatesListener(updates -> {
             for (Update update : updates) {
                 if (update.message() != null && update.message().text() != null) {
@@ -86,8 +92,19 @@ public class TelegramBotService {
         telegramBot.execute(new SendMessage(chatId, text));
     }
 
-    //не знаю насколько такой подход верный, мне нужно было как то порвать циклическую зависимость
-    //TgService -> CommandFactory -> Command -> TgService
+    public void setBotCommands() {
+        List<Command> customCommands = commandFactory.getCommandList();
+        List<BotCommand> botCommands = new ArrayList<>();
+
+        for (Command command : customCommands){
+            botCommands.add(new BotCommand(command.command(), command.description()));
+        }
+
+        SetMyCommands setMyCommands = new SetMyCommands(botCommands.toArray(new BotCommand[0]));
+
+        telegramBot.execute(setMyCommands);
+    }
+
     @EventListener
     public void handleSendMassage(SendMessageEvent event) {
         sendMessage(event.id(), event.text());

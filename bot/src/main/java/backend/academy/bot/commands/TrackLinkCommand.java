@@ -1,11 +1,13 @@
 package backend.academy.bot.commands;
 
+import backend.academy.bot.dto.AddLinkRequest;
 import backend.academy.bot.entity.Link;
 import backend.academy.bot.entity.Session;
 import backend.academy.bot.entity.States;
 import backend.academy.bot.service.ScrapperClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -14,12 +16,7 @@ import java.util.regex.Pattern;
 @Component
 public class TrackLinkCommand extends Command {
 
-//    private final ScrapperClientService scrapperClient;
-//
-//    @Autowired
-//    public TrackLinkCommand(ScrapperClientService scrapperClient) {
-//        this.scrapperClient = scrapperClient;
-//    }
+    private final ScrapperClientService scrapperClient;
 
     private static final Pattern URL_PATTERN = Pattern.compile(
         "^(https?://)?" +
@@ -30,15 +27,32 @@ public class TrackLinkCommand extends Command {
             "(/\\S*)?$"
     );
 
+    @Autowired
+    public TrackLinkCommand(ScrapperClientService scrapperClient) {
+        this.scrapperClient = scrapperClient;
+    }
+
     @Override
-    public String getName() {
+    public String command() {
         return "/track";
+    }
+
+    @Override
+    public String description() {
+        return "<url> - подписаться на обновления ссылки";
+    }
+
+    private static boolean isValidURL(String url) {
+        if (url == null || url.isBlank()) {
+            return false;
+        }
+        return URL_PATTERN.matcher(url).matches();
     }
 
     private void normalMode(Session session, Object args){
         //TODO надо проверить не только что строка это ссылка но и то что эта ссылка подходит под шаблон ссылки на гит или стак
         if (!(args instanceof String url) || url.isEmpty() || !isValidURL(url)) {
-            sendMessage(session.chatId(), "Передайте ссылку в качестве аргумента: /url <ссылка>.");
+            sendMessage(session.chatId(), "Передайте ссылку в качестве аргумента: /track <ссылка>.");
             return;
         }
 
@@ -56,8 +70,6 @@ public class TrackLinkCommand extends Command {
 
         session.setLinksTags(tagsList, States.WAITING_FOR_FILTERS);
 
-        System.out.println(tagsList);
-
         sendMessage(session.chatId(), "Введите фильры через запятую: ");
     }
 
@@ -73,10 +85,13 @@ public class TrackLinkCommand extends Command {
 
         Link link = session.getBuildedLinkAndInvalidateIt(States.DEFAULT);
 
-        System.out.println(filterList);
+        var response = scrapperClient.addLink(session.chatId(), new AddLinkRequest(link.url(), link.tags(), link.filters()));
 
-        //TODO: отправить запрос на сервер
-        sendMessage(session.chatId(), "Новая ссылка: " + link.url() +" добавлена");
+        if(response.getStatusCode() == HttpStatusCode.valueOf(200)){
+            sendMessage(session.chatId(), "Новая ссылка: " + link.url() +" добавлена");
+        }else{
+            sendMessage(session.chatId(), "К сожалению ссылка не была отслежена. Обратитесь в поддержку...");
+        }
     }
 
     @Override
@@ -86,15 +101,5 @@ public class TrackLinkCommand extends Command {
             case WAITING_FOR_TAGS -> waitingForTags(session, args);
             case WAITING_FOR_FILTERS -> waitingForFilters(session, args);
         }
-        //
-        //log.debug("Добавлена новая ссылка: {}", link);
     }
-
-    private  static boolean isValidURL(String url) {
-        if (url == null || url.isBlank()) {
-            return false;
-        }
-        return URL_PATTERN.matcher(url).matches();
-    }
-
 }

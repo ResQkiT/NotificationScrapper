@@ -15,7 +15,7 @@ import org.springframework.web.client.RestClient;
 public class ScrapperClientService {
 
     private final RestClient restClient;
-    private static final String BASE_URL = "https://localhost:8081";
+    private static final String BASE_URL = "http://localhost:8081";
 
     @Autowired
     public ScrapperClientService(RestClient.Builder restClientBuilder) {
@@ -40,13 +40,13 @@ public class ScrapperClientService {
             .toBodilessEntity();
     }
 
-    public ListLinksResponse getTrackedLinks(Long chatId) {
+    public ResponseEntity<ListLinksResponse> getTrackedLinks(Long chatId) {
         return restClient
             .get()
             .uri("/links")
             .header("Tg-Chat-Id", chatId.toString())
             .retrieve()
-            .body(ListLinksResponse.class);
+            .toEntity(ListLinksResponse.class);
     }
 
     public ResponseEntity<LinkResponse> addLink(Long chatId, AddLinkRequest request) {

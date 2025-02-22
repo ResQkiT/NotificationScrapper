@@ -1,4 +1,4 @@
-package backend.academy.bot.entity;
+package backend.academy.scrapper.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -13,7 +13,7 @@ public class Session {
     @Getter
     private final Long chatId;
 
-    @Getter //TODO: Дописать хранение тут пользователя
+    @Getter
     private final User user;
 
     @Getter @Setter

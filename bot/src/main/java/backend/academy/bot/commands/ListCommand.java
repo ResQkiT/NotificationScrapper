@@ -1,26 +1,54 @@
 package backend.academy.bot.commands;
 
 
+import backend.academy.bot.dto.LinkResponse;
+import backend.academy.bot.dto.ListLinksResponse;
 import backend.academy.bot.entity.Link;
 import backend.academy.bot.entity.Session;
-import jakarta.validation.constraints.NotNull;
+import backend.academy.bot.service.ScrapperClientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class ListCommand extends Command{
 
+    private final ScrapperClientService scrapperClient;
+
+    @Autowired
+    public ListCommand(ScrapperClientService scrapperClient) {
+        this.scrapperClient = scrapperClient;
+    }
 
     @Override
-    public String getName() {
+    public String command() {
         return "/list";
+    }
+
+    @Override
+    public String description() {
+        return "Выводит все активные ссылки пользователя";
     }
 
     @Override
     public void execute(Session session, Object args) {
         StringBuilder output = new StringBuilder();
+        List<Link> links = new ArrayList<>();
 
-        List<Link> links = session.trackedLinks();
+        var getLinksResponse = scrapperClient.getTrackedLinks(session.chatId());
+        if(getLinksResponse.getStatusCode() == HttpStatusCode.valueOf(200)){
+            ListLinksResponse listLinksResponse = getLinksResponse.getBody();
+            for (LinkResponse linkResponse : listLinksResponse.links()) {
+                links.add(new Link(linkResponse.url(), linkResponse.tags(), linkResponse.filters()));
+            }
+            session.trackedLinks(links);
+        }else{
+            //Если сервер не отвечает попробуем восстановить из котекста
+            links = session.trackedLinks();
+        }
+        //локальная копия, может быть удалена
 
         if(links.isEmpty()){
             sendMessage(session.chatId(), "Сейчас у вас нет отслеживаемых ссылок!");

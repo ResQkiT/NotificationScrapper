@@ -1,7 +1,6 @@
 package backend.academy.bot.commands;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +12,16 @@ public class CommandFactory {
     private final Map<String, Command> commandMap;
 
     @Autowired
-    @Lazy
     public CommandFactory(List<Command> commands) {
-        commandMap = commands.stream().collect(Collectors.toMap(Command::getName, cmd -> cmd));
+        commandMap = commands.stream().collect(Collectors.toMap(Command::command, cmd -> cmd));
     }
 
     public Command getCommand(String rawCommand) {
         return commandMap.getOrDefault(rawCommand, commandMap.get("undefined"));
+    }
+
+    public List<Command> getCommandList(){
+        return commandMap.values().stream().filter(command -> command.command().startsWith("/")).toList();
     }
 }
 
