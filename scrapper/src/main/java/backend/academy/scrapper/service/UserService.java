@@ -1,5 +1,6 @@
 package backend.academy.scrapper.service;
 
+import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.User;
 import backend.academy.scrapper.repository.LinkRepository;
@@ -13,18 +14,13 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final LinkRepository linkRepository;
-
     @Autowired
-    public UserService(UserRepository userRepository, LinkRepository linkRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.linkRepository = linkRepository;
     }
-
 
     public void registerUser(Long id) {
         if(userRepository.userExists(id)) return;
-
         userRepository.addUser(new User(id));
     }
 
@@ -33,22 +29,8 @@ public class UserService {
         optionalUser.ifPresent(userRepository::removeUser);
     }
 
-    public List<Link> getAllLinks(Long id){
-        return linkRepository.getLinks(id);
-    }
-
-    public Link addLink(Long id, Link link){
-        linkRepository.addLink(id, link);
-        return link;
-    }
-
-    public Link removeLink(Long chatId, String url) {
-        var linkToRemove = linkRepository.getLinks(chatId).stream()
-            .filter(l -> l.url().equals(url))
-            .findFirst();
-
-        linkToRemove.ifPresent(l -> linkRepository.removeLink(chatId, l.url()));
-        return linkToRemove.orElse(null);
+    public List<User> getAllUsers(){
+        return userRepository.getAllUsers().stream().toList();
     }
 
     public boolean userExists(Long id) {

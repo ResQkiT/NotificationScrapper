@@ -1,7 +1,7 @@
 package backend.academy.bot.commands;
 
 import backend.academy.bot.entity.Session;
-import backend.academy.bot.service.ScrapperClientService;
+import backend.academy.bot.clients.ScrapperClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartCommand extends Command {
 
-    private final ScrapperClientService scrapperClient;
+    private final ScrapperClient scrapperClient;
 
     @Autowired
-    public StartCommand(ScrapperClientService scrapperClient) {
+    public StartCommand(ScrapperClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 

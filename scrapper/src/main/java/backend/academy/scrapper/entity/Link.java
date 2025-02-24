@@ -2,28 +2,31 @@ package backend.academy.scrapper.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-@AllArgsConstructor
-public class Link implements Cloneable{
+public class Link{
+
+    @Getter
+    private final Long id;
+
     @Getter
     private final String url;
 
-    @Getter @Setter
-    private List<String> tags;
+    @Getter
+    private final List<String> tags;
+
+    @Getter
+    private final List<String> filters;
 
     @Getter @Setter
-    private List<String> filters;
+    private OffsetDateTime lastUpdatedAt;
 
-    @Override
-    protected Link clone(){
-        Link link = new Link(this.url);
-        link.tags(this.tags);
-        link.filters(this.filters);
-        return link;
-    }
-
+    @Getter @Setter
+    private List<Long> chatsId = new ArrayList<>();
 }

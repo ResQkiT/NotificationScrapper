@@ -4,7 +4,7 @@ import backend.academy.bot.dto.AddLinkRequest;
 import backend.academy.bot.entity.Link;
 import backend.academy.bot.entity.Session;
 import backend.academy.bot.entity.States;
-import backend.academy.bot.service.ScrapperClientService;
+import backend.academy.bot.clients.ScrapperClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -16,19 +16,18 @@ import java.util.regex.Pattern;
 @Component
 public class TrackLinkCommand extends Command {
 
-    private final ScrapperClientService scrapperClient;
+    private final ScrapperClient scrapperClient;
 
-    private static final Pattern URL_PATTERN = Pattern.compile(
-        "^(https?://)?" +
-            "(([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,6}|" +
-            "localhost|" +
-            "\\d{1,3}(\\.\\d{1,3}){3})" +
-            "(:\\d{1,5})?" +
-            "(/\\S*)?$"
+    private static final Pattern STACKOVERFLOW_PATTERN = Pattern.compile(
+        "^https?://(?:www\\.|ru\\.)?stackoverflow\\.com/questions/\\d+/.*"
+    );
+
+    private static final Pattern GITHUB_PATTERN = Pattern.compile(
+        "^https?://(?:www\\.)?github\\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+/?$"
     );
 
     @Autowired
-    public TrackLinkCommand(ScrapperClientService scrapperClient) {
+    public TrackLinkCommand(ScrapperClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 
@@ -39,20 +38,17 @@ public class TrackLinkCommand extends Command {
 
     @Override
     public String description() {
-        return "<url> - подписаться на обновления ссылки";
+        return "<url> - подписаться на обновление вопроса на Stackoverflow или репозитория GitHub ";
     }
 
     private static boolean isValidURL(String url) {
-        if (url == null || url.isBlank()) {
-            return false;
-        }
-        return URL_PATTERN.matcher(url).matches();
+        return STACKOVERFLOW_PATTERN.matcher(url).matches() || GITHUB_PATTERN.matcher(url).matches();
     }
 
     private void normalMode(Session session, Object args){
-        //TODO надо проверить не только что строка это ссылка но и то что эта ссылка подходит под шаблон ссылки на гит или стак
         if (!(args instanceof String url) || url.isEmpty() || !isValidURL(url)) {
-            sendMessage(session.chatId(), "Передайте ссылку в качестве аргумента: /track <ссылка>.");
+            sendMessage(session.chatId(),  "Передайте ссылку на репозиторий GitHub или вопрос StackOverflow \n " +
+                                                " в качестве аргумента: /track <ссылка>.");
             return;
         }
 
@@ -63,9 +59,11 @@ public class TrackLinkCommand extends Command {
 
     private void waitingForTags(Session session, Object args){
         if(!(args instanceof List)){
-            session.state(States.DEFAULT); //упали мы и не будем портить жизнь пользователю-сбросим его состояние
+            session.state(States.DEFAULT);
             throw new IllegalArgumentException("Passed object is not List<String>");
         }
+
+        @SuppressWarnings("unchecked")
         List<String> tagsList = (List<String>)args;
 
         session.setLinksTags(tagsList, States.WAITING_FOR_FILTERS);

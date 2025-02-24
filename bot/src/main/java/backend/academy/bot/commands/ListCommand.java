@@ -5,7 +5,7 @@ import backend.academy.bot.dto.LinkResponse;
 import backend.academy.bot.dto.ListLinksResponse;
 import backend.academy.bot.entity.Link;
 import backend.academy.bot.entity.Session;
-import backend.academy.bot.service.ScrapperClientService;
+import backend.academy.bot.clients.ScrapperClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
@@ -15,10 +15,10 @@ import java.util.List;
 @Component
 public class ListCommand extends Command{
 
-    private final ScrapperClientService scrapperClient;
+    private final ScrapperClient scrapperClient;
 
     @Autowired
-    public ListCommand(ScrapperClientService scrapperClient) {
+    public ListCommand(ScrapperClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 
@@ -38,6 +38,7 @@ public class ListCommand extends Command{
         List<Link> links = new ArrayList<>();
 
         var getLinksResponse = scrapperClient.getTrackedLinks(session.chatId());
+
         if(getLinksResponse.getStatusCode() == HttpStatusCode.valueOf(200)){
             ListLinksResponse listLinksResponse = getLinksResponse.getBody();
             for (LinkResponse linkResponse : listLinksResponse.links()) {

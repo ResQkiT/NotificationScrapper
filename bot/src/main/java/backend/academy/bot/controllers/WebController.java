@@ -1,4 +1,4 @@
-package backend.academy.bot.service;
+package backend.academy.bot.controllers;
 
 import backend.academy.bot.dto.IncomingUpdate;
 import backend.academy.bot.events.SendMessageEvent;
@@ -13,13 +13,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @RestController
-public class WebService {
+public class WebController {
 
     @NotNull
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public WebService(ApplicationEventPublisher eventPublisher, WebClient.Builder webClientBuilder) {
+    public WebController(ApplicationEventPublisher eventPublisher, WebClient.Builder webClientBuilder) {
         this.eventPublisher = eventPublisher;
     }
 
