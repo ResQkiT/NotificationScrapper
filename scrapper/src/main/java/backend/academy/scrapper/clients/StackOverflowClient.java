@@ -1,7 +1,7 @@
 package backend.academy.scrapper.clients;
 
 import backend.academy.scrapper.ScrapperConfig;
-import backend.academy.scrapper.dto.StackOverflowQuestionResponseDto;
+import backend.academy.scrapper.dto.StackOverflowResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,8 +10,8 @@ import org.springframework.web.client.RestClient;
 @Service
 public class StackOverflowClient extends Client {
     private static final String STACKOVERFLOW_BASE_API_URL = "https://api.stackexchange.com/2.3/questions/{id}";
-    private static final String SITE = "ru.stackoverflow";
-    private static final String FILTER = "!9Z(-wzu0T"; //дата последнего изменения
+    private static final String SITE = "stackoverflow";
+    private static final String FILTER = "!9Z(-wzu0T";
 
     private final String API_KEY;
     private final String ACCESS_TOKEN;
@@ -23,10 +23,10 @@ public class StackOverflowClient extends Client {
             .build());
 
         this.API_KEY = scrapperConfig.stackOverflow().key();
-        this.ACCESS_TOKEN = scrapperConfig.stackOverflow().key();
+        this.ACCESS_TOKEN = scrapperConfig.stackOverflow().accessToken();
     }
 
-    public ResponseEntity<StackOverflowQuestionResponseDto> getQuestionInfo(long questionId) {
+    public ResponseEntity<StackOverflowResponseDto> getQuestionInfo(Long questionId) {
         return client().get()
             .uri(uriBuilder -> uriBuilder
                 .path("/")
@@ -37,7 +37,7 @@ public class StackOverflowClient extends Client {
                 .build(questionId))
             .header("Accept", "application/json")
             .retrieve()
-            .toEntity(StackOverflowQuestionResponseDto.class);
+            .toEntity(StackOverflowResponseDto.class);
     }
 
 }

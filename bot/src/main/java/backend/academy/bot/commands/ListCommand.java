@@ -47,7 +47,9 @@ public class ListCommand extends Command{
             session.trackedLinks(links);
         }else{
             //Если сервер не отвечает попробуем восстановить из котекста
+
             links = session.trackedLinks();
+            //нужно отправить на сервер информацию о том что ссылки восстановлены из контекста
         }
         //локальная копия, может быть удалена
 

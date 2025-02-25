@@ -1,9 +1,6 @@
 package backend.academy.scrapper.service;
 
-import backend.academy.scrapper.dto.AddLinkRequest;
-import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.entity.User;
-import backend.academy.scrapper.repository.LinkRepository;
 import backend.academy.scrapper.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

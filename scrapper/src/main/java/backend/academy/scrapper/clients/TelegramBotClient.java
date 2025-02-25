@@ -21,8 +21,6 @@ public class TelegramBotClient extends Client {
     }
 
     public ResponseEntity<Void> sendUpdate(LinkUpdate linkUpdate) {
-
-        System.out.println(linkUpdate);
         return client().post()
             .uri("/update")
             .contentType(MediaType.APPLICATION_JSON)

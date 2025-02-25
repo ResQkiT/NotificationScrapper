@@ -24,21 +24,18 @@ public class LinkScheduler {
 
     @Scheduled(fixedDelay = 3000)
     public void execute(){
-        //Получим все ссылки
-        userService.getAllUsers().stream().forEach(user ->{
+        //Пока не оптимизируем моменты что несколько пользователей могут ждать одного вопроса
+
+        userService.getAllUsers().forEach(user ->{
             List<Link> users_link = linkService.getAllLinks(user.id());
-            //System.out.println(user.id() + " " + users_link);
-            //для каждой ссылки проверим что на ней
             for (Link link : users_link){
                 for (Processor processor : processors){
                     if (processor.supports(link)){
-                        //Данный процессор поддерживает эту ссылку
-                        System.out.println(processor);
 
                         String result = processor.process(link);
+
                         if (result != null){
                             telegramBotClient.sendUpdate(new LinkUpdate(link.id(), link.url(), result, link.chatsId()));
-
                         }
                     }
                 }

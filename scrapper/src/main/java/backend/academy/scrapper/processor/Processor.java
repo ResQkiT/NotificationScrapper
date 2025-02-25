@@ -4,6 +4,7 @@ import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.service.LinkService;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.OffsetDateTime;
 
 public abstract class Processor {
     private final String host;
@@ -23,11 +24,23 @@ public abstract class Processor {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(uri.getHost() + " " + this.host);
         return uri.getHost().equals(this.host);
     }
 
     public LinkService service() {
         return linkService;
+    }
+
+    protected boolean isFirstTimeProcessing(Link link) {
+        return link.lastUpdatedAt() == null;
+    }
+
+    protected boolean hasUpdates(OffsetDateTime respUpdatesTime, Link link) {
+        return respUpdatesTime.isAfter(link.lastUpdatedAt());
+    }
+
+    protected Link updateLink(Link link, OffsetDateTime updatedAt) {
+        link.lastUpdatedAt(updatedAt);
+        return service().updateLink(link);
     }
 }

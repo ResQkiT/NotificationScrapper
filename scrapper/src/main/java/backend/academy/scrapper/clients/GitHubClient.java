@@ -16,13 +16,10 @@ public class GitHubClient extends Client{
         super(restClientBuilder
             .baseUrl(BASE_GITHUB_URL)
             .build());
-
         this.token = scrapperConfig.githubToken();
     }
 
     public ResponseEntity<GitHubResponseDto> getRepositoryInfo(String ownerAndRepo){
-        System.out.println("/repos/" + ownerAndRepo);
-        System.out.println(token);
         return client().get()
             .uri("/repos/" + ownerAndRepo)
             .header("Authorization", "Bearer " + token)
