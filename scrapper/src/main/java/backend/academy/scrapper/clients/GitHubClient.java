@@ -1,5 +1,6 @@
 package backend.academy.scrapper.clients;
 
+import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.dto.GitHubResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -9,13 +10,14 @@ import org.springframework.web.client.RestClient;
 @Service
 public class GitHubClient extends Client{
 
-    private static final String BASE_GITHUB_URL = "https://api.github.com";
+    private final String BASE_GITHUB_URL;
     private final String token;
 
-    public GitHubClient(RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig) {
+    public GitHubClient(RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
         super(restClientBuilder
-            .baseUrl(BASE_GITHUB_URL)
+            .baseUrl(domainsConfig.github())
             .build());
+        this.BASE_GITHUB_URL = domainsConfig.github();
         this.token = scrapperConfig.githubToken();
     }
 

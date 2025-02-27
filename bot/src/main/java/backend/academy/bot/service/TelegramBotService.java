@@ -52,7 +52,7 @@ public class TelegramBotService {
         });
     }
 
-    private void handleMessage(Update update) {
+    public void handleMessage(Update update) {
         Message message = update.message();
         String messageText = message.text().toLowerCase();
 

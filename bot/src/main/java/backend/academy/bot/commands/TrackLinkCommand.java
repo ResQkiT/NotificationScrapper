@@ -41,7 +41,7 @@ public class TrackLinkCommand extends Command {
         return "<url> - подписаться на обновление вопроса на Stackoverflow или репозитория GitHub ";
     }
 
-    private static boolean isValidURL(String url) {
+    public static boolean isValidURL(String url) {
         return STACKOVERFLOW_PATTERN.matcher(url).matches() || GITHUB_PATTERN.matcher(url).matches();
     }
 

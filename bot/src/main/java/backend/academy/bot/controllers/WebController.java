@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @RestController
@@ -19,7 +18,7 @@ public class WebController {
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public WebController(ApplicationEventPublisher eventPublisher, WebClient.Builder webClientBuilder) {
+    public WebController(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
