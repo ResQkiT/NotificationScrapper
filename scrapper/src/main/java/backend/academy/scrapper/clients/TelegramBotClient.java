@@ -1,5 +1,6 @@
 package backend.academy.scrapper.clients;
 
+import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.dto.LinkUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -10,11 +11,9 @@ import org.springframework.web.client.RestClient;
 @Service
 public class TelegramBotClient extends Client {
 
-    private static final String TELEGRAM_SERVICE_URL = "http://localhost:8080";
-
     @Autowired
-    public TelegramBotClient(RestClient.Builder restClientBuilder) {
-        super(restClientBuilder.baseUrl(TELEGRAM_SERVICE_URL).build());
+    public TelegramBotClient(RestClient.Builder restClientBuilder, DomainsConfig domainsConfig) {
+        super(restClientBuilder.baseUrl(domainsConfig.telegramBotUrl()).build());
     }
 
     public ResponseEntity<Void> sendUpdate(LinkUpdate linkUpdate) {

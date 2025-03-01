@@ -40,12 +40,14 @@ public class ListCommand extends Command {
 
         if (getLinksResponse.getStatusCode() == HttpStatusCode.valueOf(200)) {
             ListLinksResponse listLinksResponse = getLinksResponse.getBody();
-            for (LinkResponse linkResponse : listLinksResponse.links()) {
-                links.add(new Link(linkResponse.url(), linkResponse.tags(), linkResponse.filters()));
+            if (listLinksResponse != null && listLinksResponse.links() != null) {
+                for (LinkResponse linkResponse : listLinksResponse.links()) {
+                    links.add(new Link(linkResponse.url(), linkResponse.tags(), linkResponse.filters()));
+                }
+                session.trackedLinks(links);
             }
-            session.trackedLinks(links);
         } else {
-            // Если сервер не отвечает попробуем восстановить из котекста
+            // Если сервер не отвечает или мы получили невалидный ответ попробуем восстановить из котекста
 
             links = session.trackedLinks();
             // нужно отправить на сервер информацию о том что ссылки восстановлены из контекста

@@ -18,6 +18,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -53,7 +54,7 @@ public class TelegramBotService {
 
     public void handleMessage(Update update) {
         Message message = update.message();
-        String messageText = message.text().toLowerCase();
+        String messageText = message.text().toLowerCase(Locale.getDefault());
 
         Long chatId = message.chat().id();
         User user = message.from();

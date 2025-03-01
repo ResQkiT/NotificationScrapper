@@ -22,29 +22,23 @@ public class StackOverflowClientTest {
 
     @BeforeEach
     void setUp() {
-        // Создаем объект StackOverflowCredentials с тестовыми данными
         ScrapperConfig scrapperConfig = mock(ScrapperConfig.class);
         ScrapperConfig.StackOverflowCredentials credentials = mock(ScrapperConfig.StackOverflowCredentials.class);
 
-        // Мокаем метод stackOverflow(), чтобы он возвращал объект credentials
         when(scrapperConfig.stackOverflow()).thenReturn(credentials);
 
-        // Теперь мокаем методы key() и accessToken() на объекте credentials
         when(credentials.key()).thenReturn("test-key");
         when(credentials.accessToken()).thenReturn("test-access-token");
 
-        // Конфигурируем DomainsConfig
         DomainsConfig domainsConfig = new DomainsConfig();
         domainsConfig.stackoverflow("http://localhost:8089");
 
-        // Настроим RestClient.Builder и StackOverflowClient
         RestClient.Builder restClientBuilder = RestClient.builder();
         stackOverflowClient = new StackOverflowClient(restClientBuilder, scrapperConfig, domainsConfig);
     }
 
     @Test
     void getQuestionInfo_shouldReturnQuestionData() {
-        // Arrange
         Long questionId = 12345L;
 
         stubFor(get(urlPathEqualTo("/questions/" + questionId))
@@ -63,10 +57,8 @@ public class StackOverflowClientTest {
                                 + "\"score\": 10"
                                 + "}]}")));
 
-        // Act
         ResponseEntity<StackOverflowResponseDto> response = stackOverflowClient.getQuestionInfo(questionId);
 
-        // Assert
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody().items()).hasSize(1);
 

@@ -36,7 +36,7 @@ class GitHubClientTest {
     }
 
     @Test
-    void getRepositoryInfo_shouldReturnRepositoryData() {
+    void testGetRepositoryInfo_whenOk_thenReturnRepositoryData() {
         // Arrange
         String ownerAndRepo = "testOwner/testRepo";
         stubFor(get("/repos/" + ownerAndRepo)
@@ -49,10 +49,8 @@ class GitHubClientTest {
                                 + "\"default_branch\": \"main\""
                                 + "}")));
 
-        // Act
         ResponseEntity<GitHubResponseDto> response = gitHubClient.getRepositoryInfo(ownerAndRepo);
 
-        // Assert
         assertThat(response.getStatusCode().value()).isEqualTo(200);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().fullName()).isEqualTo("testOwner/testRepo");

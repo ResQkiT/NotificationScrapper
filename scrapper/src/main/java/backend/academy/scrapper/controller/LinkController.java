@@ -33,9 +33,9 @@ public class LinkController {
 
     @GetMapping
     public ResponseEntity<ListLinksResponse> getTrackedLinks(@RequestHeader("Tg-Chat-Id") Long chatId) {
-        log.info("Получение отслеживаемых ссылок для чата: {}", chatId);
+        log.info("Получение отслеживаемых ссылок для чата: {}", chatId.toString());
 
-        if (chatId == null || chatId <= 0) {
+        if (chatId <= 0) {
             throw new ScrapperException("Некорректный ID чата ", HttpStatus.BAD_REQUEST);
         }
 
@@ -57,13 +57,16 @@ public class LinkController {
     @PostMapping()
     public ResponseEntity<LinkResponse> addLink(
             @RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody AddLinkRequest request) {
-        log.info("Попытка добавления ссылки для чата: {} с запросом: {}", chatId, request);
+        log.info("Попытка добавления ссылки для чата: {}", chatId.toString());
 
-        if (chatId == null || chatId <= 0) {
+        if (chatId <= 0) {
             throw new ScrapperException("Некорректный ID чата", HttpStatus.BAD_REQUEST);
         }
 
-        if (request == null || request.link() == null || request.link().isEmpty()) {
+        if (request == null
+                || request.link() == null
+                || request.link().isEmpty()
+                || request.link().isBlank()) {
             throw new ScrapperException("Некорректные данные для добавления ссылки", HttpStatus.BAD_REQUEST);
         }
 
@@ -82,9 +85,9 @@ public class LinkController {
     @DeleteMapping()
     public ResponseEntity<LinkResponse> removeLink(
             @RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
-        log.info("Попытка удаления ссылки для чата: {} с запросом: {}", chatId, request);
+        log.info("Попытка удаления ссылки для чата: {}", chatId.toString());
 
-        if (chatId == null || chatId <= 0) {
+        if (chatId <= 0) {
             throw new ScrapperException("Некорректный ID чата", HttpStatus.BAD_REQUEST);
         }
 

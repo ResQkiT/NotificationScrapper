@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.ApplicationEventPublisher;
 
 class TelegramBotServiceTest {
 
@@ -38,9 +37,6 @@ class TelegramBotServiceTest {
     @Mock
     private CommandFactory commandFactory;
 
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
-
     private TelegramBotService telegramBotService;
 
     @BeforeEach
@@ -50,7 +46,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
-    void shouldSetBotCommandsOnStart() {
+    void testSetCommandsOnStartup_whenTelegramServiceStart_thenAllCommandsSet() {
         telegramBotService.start();
 
         verify(telegramBot).execute(any(SetMyCommands.class));
@@ -58,7 +54,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
-    void shouldHandleUnknownCommand() {
+    void testHandlUnknownCommand_whenUserSendUnknownCommand_thenTgServiceSendUnknownCommand() {
         Long chatId = 123L;
         Update update = createUpdateWithText(chatId, "unknown_command");
         Session mockSession = mock(Session.class);
@@ -75,7 +71,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
-    void shouldHandleWaitingForTagsState() {
+    void testHandleWaitingForTagsState_whenUserHasWaitingForTags_thenPerformNormal() {
         Long chatId = 123L;
         Update update = createUpdateWithText(chatId, "tag1,tag2");
         Session mockSession = mock(Session.class);
@@ -92,7 +88,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
-    void shouldSendMessageCorrectly() {
+    void testSendMessageCorrectly_whenAllOk_thenAllOk() {
         telegramBotService.sendMessage(123L, "Test message");
 
         ArgumentCaptor<SendMessage> captor = ArgumentCaptor.forClass(SendMessage.class);
@@ -104,7 +100,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
-    void shouldHandleSendMessageEvent() {
+    void testHandleSendMessageEvent_thenAllOk_thenAllOk() {
         SendMessageEvent event = new SendMessageEvent(123L, "Test event");
 
         telegramBotService.handleSendMassage(event);

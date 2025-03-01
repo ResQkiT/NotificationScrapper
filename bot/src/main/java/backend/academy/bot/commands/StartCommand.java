@@ -40,7 +40,7 @@ public class StartCommand extends Command {
 
             sendMessage(session.chatId(), message);
         } else {
-            log.error("Server offline. Error code:" + registerChatResponse.getStatusCode());
+            log.error("Server offline. Error code:{}", registerChatResponse.getStatusCode());
 
             String message =
                     "К сожалению сейчас сервер не ответчает. \n" + "Чтобы ознакомиться с командами введите /help";

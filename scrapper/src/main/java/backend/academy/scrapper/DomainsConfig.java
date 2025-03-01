@@ -11,4 +11,5 @@ public class DomainsConfig {
     private String github = "https://api.github.com";
     private String stackoverflow = "https://api.stackexchange.com/2.3";
     private String bot = "http://localhost:8090";
+    private String telegramBotUrl = "http://localhost:8080";
 }

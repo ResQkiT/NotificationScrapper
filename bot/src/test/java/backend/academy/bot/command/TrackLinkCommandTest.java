@@ -34,7 +34,7 @@ class TrackLinkCommandTest {
     }
 
     @Test
-    void testNormalMode_whenInvalidUrl() {
+    void testNormalMode_whenInvalidUrl_thenSendEvent() {
         String invalidUrl = "invalid-url";
         when(session.chatId()).thenReturn(12345L);
         when(session.state()).thenReturn(States.DEFAULT);
@@ -45,7 +45,7 @@ class TrackLinkCommandTest {
     }
 
     @Test
-    void testNormalMode_whenValidUrl() {
+    void testNormalMode_whenValidUrl_thenSendInvalidEvent() {
         String validUrl = "https://stackoverflow.com/questions/12345";
         when(session.chatId()).thenReturn(12345L);
         when(session.state()).thenReturn(States.DEFAULT);
@@ -56,7 +56,7 @@ class TrackLinkCommandTest {
     }
 
     @Test
-    void testWaitingForTags() {
+    void testWaitingForTags_whenUserIsWaitingForTags_thenSendCorrectEvent() {
         List<String> tags = List.of("java", "programming");
         when(session.chatId()).thenReturn(12345L);
         when(session.state()).thenReturn(States.WAITING_FOR_TAGS);
@@ -67,7 +67,7 @@ class TrackLinkCommandTest {
     }
 
     @Test
-    void testIsValidURL() {
+    void testIsValidURL_whenUrlIsCorrectOrIncorrect_thenPerformOk() {
         assertThat(TrackLinkCommand.isValidURL("https://stackoverflow.com/questions/12345/valid-question"))
                 .isTrue();
         assertThat(TrackLinkCommand.isValidURL("https://github.com/user/repository"))
