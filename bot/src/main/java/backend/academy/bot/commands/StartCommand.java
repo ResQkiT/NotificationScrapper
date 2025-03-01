@@ -1,7 +1,7 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.entity.Session;
 import backend.academy.bot.clients.ScrapperClient;
+import backend.academy.bot.entity.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -34,18 +34,17 @@ public class StartCommand extends Command {
 
         var registerChatResponse = scrapperClient.registerChat(session.chatId());
 
-        if(registerChatResponse.getStatusCode() == HttpStatusCode.valueOf(200)){
-            String message = "Вызвана команда для старта. Вы успешно зарегестрировались в системе\n" +
-                "Чтобы ознакомиться с командами введите /help";
+        if (registerChatResponse.getStatusCode() == HttpStatusCode.valueOf(200)) {
+            String message = "Вызвана команда для старта. Вы успешно зарегестрировались в системе\n"
+                    + "Чтобы ознакомиться с командами введите /help";
 
             sendMessage(session.chatId(), message);
-        }else{
+        } else {
             log.error("Server offline. Error code:" + registerChatResponse.getStatusCode());
 
-            String message = "К сожалению сейчас сервер не ответчает. \n" +
-                "Чтобы ознакомиться с командами введите /help";
+            String message =
+                    "К сожалению сейчас сервер не ответчает. \n" + "Чтобы ознакомиться с командами введите /help";
             sendMessage(session.chatId(), message);
         }
-
     }
 }

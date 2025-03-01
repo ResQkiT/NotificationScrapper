@@ -4,16 +4,16 @@ import backend.academy.scrapper.clients.StackOverflowClient;
 import backend.academy.scrapper.dto.StackOverflowResponseDto;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.service.LinkService;
-import org.springframework.stereotype.Component;
 import java.net.URI;
+import org.springframework.stereotype.Component;
 
 @Component
-public class StackOverflowProcessor extends Processor{
+public class StackOverflowProcessor extends Processor {
 
     private final StackOverflowClient stackOverflowClient;
 
     public StackOverflowProcessor(StackOverflowClient stackOverflowClient, LinkService linkService) {
-        super("stackoverflow.com" , linkService);
+        super("stackoverflow.com", linkService);
         this.stackOverflowClient = stackOverflowClient;
     }
 
@@ -28,7 +28,7 @@ public class StackOverflowProcessor extends Processor{
             return null;
         }
 
-        if (hasUpdates(lastQuestion.lastActivityDate(), link) ){
+        if (hasUpdates(lastQuestion.lastActivityDate(), link)) {
             updateLink(link, lastQuestion.lastActivityDate());
             return "Есть изменения";
         }
@@ -36,7 +36,7 @@ public class StackOverflowProcessor extends Processor{
         return null;
     }
 
-    private StackOverflowResponseDto fetchQuestionInfo(Link link){
+    private StackOverflowResponseDto fetchQuestionInfo(Link link) {
         URI uri = URI.create(link.url());
 
         Long questionId = extractQuestionId(uri.getPath());

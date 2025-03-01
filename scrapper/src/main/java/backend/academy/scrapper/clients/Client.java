@@ -9,7 +9,7 @@ public class Client {
         this.restClient = restClient;
     }
 
-    public RestClient client(){
-        return  restClient;
+    public RestClient client() {
+        return restClient;
     }
 }

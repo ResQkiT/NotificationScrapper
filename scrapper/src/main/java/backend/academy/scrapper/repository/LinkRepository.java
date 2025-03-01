@@ -2,12 +2,11 @@ package backend.academy.scrapper.repository;
 
 import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.entity.Link;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 @Slf4j
 @Repository

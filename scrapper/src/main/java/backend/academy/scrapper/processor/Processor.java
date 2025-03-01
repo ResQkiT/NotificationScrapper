@@ -17,7 +17,7 @@ public abstract class Processor {
 
     public abstract String process(Link link);
 
-    public boolean supports(Link link){
+    public boolean supports(Link link) {
         URI uri;
         try {
             uri = new URI(link.url());

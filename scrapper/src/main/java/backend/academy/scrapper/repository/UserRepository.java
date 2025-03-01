@@ -1,11 +1,11 @@
 package backend.academy.scrapper.repository;
 
 import backend.academy.scrapper.entity.User;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 @Slf4j
 @Repository
@@ -33,9 +33,7 @@ public class UserRepository {
     }
 
     public Optional<User> findUserById(Long userId) {
-        return userSet.stream()
-            .filter(user -> user.id().equals(userId))
-            .findFirst();
+        return userSet.stream().filter(user -> user.id().equals(userId)).findFirst();
     }
 
     public Set<User> getAllUsers() {
@@ -43,8 +41,7 @@ public class UserRepository {
     }
 
     public boolean userExists(Long userId) {
-        return userSet.stream()
-            .anyMatch(user -> user.id().equals(userId));
+        return userSet.stream().anyMatch(user -> user.id().equals(userId));
     }
 
     public int getUserCount() {

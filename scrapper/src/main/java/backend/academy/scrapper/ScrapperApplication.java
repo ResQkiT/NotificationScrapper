@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableConfigurationProperties({ScrapperConfig.class , DomainsConfig.class})
+@EnableConfigurationProperties({ScrapperConfig.class, DomainsConfig.class})
 public class ScrapperApplication {
     public static void main(String[] args) {
         SpringApplication.run(ScrapperApplication.class, args);

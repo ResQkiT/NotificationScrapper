@@ -1,6 +1,6 @@
 package backend.academy.bot.entity;
 
-public enum States{
+public enum States {
     UNREGISTERED,
     DEFAULT,
     WAITING_FOR_LINK,

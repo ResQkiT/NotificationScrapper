@@ -29,9 +29,6 @@
         <java.version>23</java.version>
         <jdk.version>23</jdk.version>
 
-
-
-
         <!-- libs -->
         <commons-text.version>1.12.0</commons-text.version>
         <commons-compress.version>1.27.1</commons-compress.version>
@@ -196,11 +193,11 @@
                                 <groupId>org.projectlombok</groupId>
                                 <artifactId>lombok</artifactId>
                             </path>
-<!--                            <path>-->
-<!--                                <groupId>com.google.errorprone</groupId>-->
-<!--                                <artifactId>error_prone_core</artifactId>-->
-<!--                                <version>${error-prone.version}</version>-->
-<!--                            </path>-->
+                            <!--                            <path>-->
+                            <!--                                <groupId>com.google.errorprone</groupId>-->
+                            <!--                                <artifactId>error_prone_core</artifactId>-->
+                            <!--                                <version>${error-prone.version}</version>-->
+                            <!--                            </path>-->
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>

@@ -1,16 +1,14 @@
 package backend.academy.scrapper.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @RequiredArgsConstructor
-public class Link{
+public class Link {
 
     @Getter
     private final Long id;
@@ -24,9 +22,11 @@ public class Link{
     @Getter
     private final List<String> filters;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private OffsetDateTime lastUpdatedAt;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private List<Long> chatsId = new ArrayList<>();
 }

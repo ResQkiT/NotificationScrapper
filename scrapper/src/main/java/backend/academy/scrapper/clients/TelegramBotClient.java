@@ -14,17 +14,15 @@ public class TelegramBotClient extends Client {
 
     @Autowired
     public TelegramBotClient(RestClient.Builder restClientBuilder) {
-        super(restClientBuilder
-            .baseUrl(TELEGRAM_SERVICE_URL)
-            .build());
+        super(restClientBuilder.baseUrl(TELEGRAM_SERVICE_URL).build());
     }
 
     public ResponseEntity<Void> sendUpdate(LinkUpdate linkUpdate) {
         return client().post()
-            .uri("/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(linkUpdate)
-            .retrieve()
-            .toBodilessEntity();
+                .uri("/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(linkUpdate)
+                .retrieve()
+                .toBodilessEntity();
     }
 }

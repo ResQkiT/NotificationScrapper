@@ -17,25 +17,25 @@ public class StackOverflowClient extends Client {
     private final String ACCESS_TOKEN;
 
     @Autowired
-    public StackOverflowClient(RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
+    public StackOverflowClient(
+            RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
         super(restClientBuilder
-            .baseUrl(domainsConfig.stackoverflow() + "/questions/{id}")
-            .build());
+                .baseUrl(domainsConfig.stackoverflow() + "/questions/{id}")
+                .build());
         this.API_KEY = scrapperConfig.stackOverflow().key();
         this.ACCESS_TOKEN = scrapperConfig.stackOverflow().accessToken();
     }
 
     public ResponseEntity<StackOverflowResponseDto> getQuestionInfo(Long questionId) {
         return client().get()
-            .uri(uriBuilder -> uriBuilder
-                .queryParam("site", SITE)
-                .queryParam("filter", FILTER)
-                .queryParam("key", API_KEY)
-                .queryParam("access_token", ACCESS_TOKEN)
-                .build(questionId))
-            .header("Accept", "application/json")
-            .retrieve()
-            .toEntity(StackOverflowResponseDto.class);
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("site", SITE)
+                        .queryParam("filter", FILTER)
+                        .queryParam("key", API_KEY)
+                        .queryParam("access_token", ACCESS_TOKEN)
+                        .build(questionId))
+                .header("Accept", "application/json")
+                .retrieve()
+                .toEntity(StackOverflowResponseDto.class);
     }
-
 }

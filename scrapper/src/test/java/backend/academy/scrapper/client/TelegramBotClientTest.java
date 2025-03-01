@@ -1,4 +1,3 @@
 package backend.academy.scrapper.client;
 
-public class TelegramBotClientTest {
-}
+public class TelegramBotClientTest {}

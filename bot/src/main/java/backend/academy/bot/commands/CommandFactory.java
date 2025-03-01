@@ -1,10 +1,10 @@
 package backend.academy.bot.commands;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CommandFactory {
@@ -20,8 +20,9 @@ public class CommandFactory {
         return commandMap.getOrDefault(rawCommand, commandMap.get("undefined"));
     }
 
-    public List<Command> getCommandList(){
-        return commandMap.values().stream().filter(command -> command.command().startsWith("/")).toList();
+    public List<Command> getCommandList() {
+        return commandMap.values().stream()
+                .filter(command -> command.command().startsWith("/"))
+                .toList();
     }
 }
-

@@ -23,13 +23,16 @@ public class WebController {
     }
 
     @PostMapping("/update")
-    public void update(@RequestBody IncomingUpdate update){
+    public void update(@RequestBody IncomingUpdate update) {
         log.info("New http request");
 
         for (Long chatId : update.tgChatIds()) {
             StringBuilder message = new StringBuilder();
-            message.append("Изменение на странице: ").append(update.url()).append("\n")
-                .append(" Описание: ").append(update.description());
+            message.append("Изменение на странице: ")
+                    .append(update.url())
+                    .append("\n")
+                    .append(" Описание: ")
+                    .append(update.description());
 
             eventPublisher.publishEvent(new SendMessageEvent(chatId, message.toString()));
         }

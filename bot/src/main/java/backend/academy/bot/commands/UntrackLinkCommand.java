@@ -1,8 +1,8 @@
 package backend.academy.bot.commands;
 
+import backend.academy.bot.clients.ScrapperClient;
 import backend.academy.bot.dto.RemoveLinkRequest;
 import backend.academy.bot.entity.Session;
-import backend.academy.bot.clients.ScrapperClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -28,6 +28,7 @@ public class UntrackLinkCommand extends Command {
     public String description() {
         return "<url> - подписаться на обновления ссылки";
     }
+
     @Override
     public void execute(Session session, Object args) {
         if (!(args instanceof String url) || url.isEmpty()) {
@@ -51,9 +52,12 @@ public class UntrackLinkCommand extends Command {
             log.info("Ссылка {} успешно удалена у пользователя {}", url, session.chatId());
             sendMessage(session.chatId(), "Ссылка " + url + " удалена из отслеживаемых");
         } else {
-            log.error("Ошибка при удалении ссылки {} у пользователя {}. Код ответа: {}", url, session.chatId(), removeLinkResponse.getStatusCode());
+            log.error(
+                    "Ошибка при удалении ссылки {} у пользователя {}. Код ответа: {}",
+                    url,
+                    session.chatId(),
+                    removeLinkResponse.getStatusCode());
             sendMessage(session.chatId(), "Что-то пошло не так");
         }
-
     }
 }

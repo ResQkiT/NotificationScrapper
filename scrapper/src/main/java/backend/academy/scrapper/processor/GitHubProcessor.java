@@ -4,12 +4,12 @@ import backend.academy.scrapper.clients.GitHubClient;
 import backend.academy.scrapper.dto.GitHubResponseDto;
 import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.service.LinkService;
+import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.net.URI;
 
 @Component
-public class GitHubProcessor extends Processor{
+public class GitHubProcessor extends Processor {
 
     private final GitHubClient client;
 
@@ -28,7 +28,7 @@ public class GitHubProcessor extends Processor{
             return null;
         }
 
-        if (hasUpdates(linkInfo.updatedAt(), link)){
+        if (hasUpdates(linkInfo.updatedAt(), link)) {
             updateLink(link, linkInfo.updatedAt());
             return "Есть изменения";
         }

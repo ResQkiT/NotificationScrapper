@@ -8,14 +8,13 @@ import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exeptions.ScrapperException;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.UserService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -47,7 +46,7 @@ public class LinkController {
         List<Link> userLinks = linkService.getAllLinks(chatId);
         List<LinkResponse> linkResponseList = new ArrayList<>();
 
-        for (Link link : userLinks){
+        for (Link link : userLinks) {
             linkResponseList.add(new LinkResponse(link.id(), link.url(), link.tags(), link.filters()));
         }
 
@@ -56,8 +55,8 @@ public class LinkController {
     }
 
     @PostMapping()
-    public ResponseEntity<LinkResponse> addLink(@RequestHeader("Tg-Chat-Id") Long chatId,
-                                                @RequestBody AddLinkRequest request) {
+    public ResponseEntity<LinkResponse> addLink(
+            @RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody AddLinkRequest request) {
         log.info("Попытка добавления ссылки для чата: {} с запросом: {}", chatId, request);
 
         if (chatId == null || chatId <= 0) {
@@ -81,8 +80,8 @@ public class LinkController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<LinkResponse> removeLink(@RequestHeader("Tg-Chat-Id") Long chatId,
-                                                   @RequestBody RemoveLinkRequest request) {
+    public ResponseEntity<LinkResponse> removeLink(
+            @RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
         log.info("Попытка удаления ссылки для чата: {} с запросом: {}", chatId, request);
 
         if (chatId == null || chatId <= 0) {
@@ -99,11 +98,12 @@ public class LinkController {
 
         Link removedLink = linkService.removeLink(chatId, request.link());
 
-        if(removedLink == null){
+        if (removedLink == null) {
             throw new ScrapperException("Сcылка не найдена", HttpStatus.NOT_FOUND);
         }
 
-        LinkResponse response = new LinkResponse(removedLink.id(), removedLink.url(), removedLink.tags(), removedLink.filters());
+        LinkResponse response =
+                new LinkResponse(removedLink.id(), removedLink.url(), removedLink.tags(), removedLink.filters());
 
         log.info("Ссылка успешно удалена: {}", response);
         return ResponseEntity.ok(response);

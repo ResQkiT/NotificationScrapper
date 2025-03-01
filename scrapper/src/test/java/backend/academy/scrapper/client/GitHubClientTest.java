@@ -1,23 +1,22 @@
 package backend.academy.scrapper.client;
 
-import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.ScrapperConfig;
-import backend.academy.scrapper.clients.GitHubClient;
-import backend.academy.scrapper.dto.GitHubResponseDto;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClient;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-
-import java.time.OffsetDateTime;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import backend.academy.scrapper.DomainsConfig;
+import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.clients.GitHubClient;
+import backend.academy.scrapper.dto.GitHubResponseDto;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import java.time.OffsetDateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClient;
 
 @WireMockTest(httpPort = 8089)
 class GitHubClientTest {
@@ -41,15 +40,14 @@ class GitHubClientTest {
         // Arrange
         String ownerAndRepo = "testOwner/testRepo";
         stubFor(get("/repos/" + ownerAndRepo)
-            .withHeader("Authorization", equalTo("Bearer test-token"))
-            .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody("{" +
-                    "\"full_name\": \"testOwner/testRepo\"," +
-                    "\"updated_at\": \"2024-01-01T12:00:00Z\"," +
-                    "\"default_branch\": \"main\"" +
-                    "}")));
+                .withHeader("Authorization", equalTo("Bearer test-token"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{" + "\"full_name\": \"testOwner/testRepo\","
+                                + "\"updated_at\": \"2024-01-01T12:00:00Z\","
+                                + "\"default_branch\": \"main\""
+                                + "}")));
 
         // Act
         ResponseEntity<GitHubResponseDto> response = gitHubClient.getRepositoryInfo(ownerAndRepo);

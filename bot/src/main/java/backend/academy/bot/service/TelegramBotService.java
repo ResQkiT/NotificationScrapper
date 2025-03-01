@@ -2,9 +2,9 @@ package backend.academy.bot.service;
 
 import backend.academy.bot.commands.Command;
 import backend.academy.bot.commands.CommandFactory;
+import backend.academy.bot.entity.Session;
 import backend.academy.bot.events.SendMessageEvent;
 import backend.academy.bot.repository.SessionRepository;
-import backend.academy.bot.entity.Session;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.BotCommand;
@@ -12,17 +12,16 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
-
 import com.pengrad.telegrambot.request.SetMyCommands;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -39,7 +38,7 @@ public class TelegramBotService {
     private final CommandFactory commandFactory;
 
     @PostConstruct
-    public void start(){
+    public void start() {
         log.info("Bot started");
         setBotCommands();
         telegramBot.setUpdatesListener(updates -> {
@@ -60,32 +59,31 @@ public class TelegramBotService {
         User user = message.from();
 
         Session session;
-        if (!sessionRepository.isSessionValid(chatId)){
+        if (!sessionRepository.isSessionValid(chatId)) {
             session = sessionRepository.createSession(chatId, user);
-        }else{
+        } else {
             session = sessionRepository.getSession(chatId);
         }
 
-        switch (session.state()){
-            case DEFAULT ->{
+        switch (session.state()) {
+            case DEFAULT -> {
                 String[] parts = messageText.split(" ", 2);
                 String rawCommand = parts[0];
                 String args = (parts.length > 1) ? parts[1] : "";
                 commandFactory.getCommand(rawCommand).execute(session, args);
             }
             case WAITING_FOR_TAGS -> {
-                //парсим теги из строки
+                // парсим теги из строки
                 String[] tags = messageText.split(",");
                 List<String> list = Arrays.asList(tags);
                 commandFactory.getCommand("/track").execute(session, list);
             }
-            case WAITING_FOR_FILTERS ->{
+            case WAITING_FOR_FILTERS -> {
                 String[] filters = messageText.split(",");
                 List<String> list = Arrays.asList(filters);
                 commandFactory.getCommand("/track").execute(session, list);
             }
         }
-
     }
 
     public void sendMessage(Long chatId, String text) {
@@ -96,7 +94,7 @@ public class TelegramBotService {
         List<Command> customCommands = commandFactory.getCommandList();
         List<BotCommand> botCommands = new ArrayList<>();
 
-        for (Command command : customCommands){
+        for (Command command : customCommands) {
             botCommands.add(new BotCommand(command.command(), command.description()));
         }
 
