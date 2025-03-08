@@ -26,7 +26,6 @@ public class UserController {
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> registerChat(@PathVariable("id") Long id) {
-        log.info("Попытка регистрации пользователя с id: {}", id);
 
         if (id == null || id <= 0) {
             throw new ScrapperException("Некорректный ID чата", HttpStatus.BAD_REQUEST);
@@ -38,7 +37,6 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteChat(@PathVariable("id") Long id) {
-        log.info("Попытка удаления пользователя с id: {}", id);
 
         if (id == null || id <= 0) {
             throw new ScrapperException("Некорректный ID чата", HttpStatus.BAD_REQUEST);
