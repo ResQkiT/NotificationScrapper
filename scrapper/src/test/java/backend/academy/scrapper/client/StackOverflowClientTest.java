@@ -30,8 +30,7 @@ public class StackOverflowClientTest {
         when(credentials.key()).thenReturn("test-key");
         when(credentials.accessToken()).thenReturn("test-access-token");
 
-        DomainsConfig domainsConfig = new DomainsConfig();
-        domainsConfig.stackoverflow("http://localhost:8089");
+        DomainsConfig domainsConfig = new DomainsConfig("", "http://localhost:8089", "", "");
 
         RestClient.Builder restClientBuilder = RestClient.builder();
         stackOverflowClient = new StackOverflowClient(restClientBuilder, scrapperConfig, domainsConfig);

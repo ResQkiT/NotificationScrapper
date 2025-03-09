@@ -4,6 +4,12 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
+domains:
+  github: "https://api.github.com"
+  stackoverflow: "https://api.stackexchange.com/2.3"
+  bot: "http://localhost:8090"
+  telegram-bot-url: "http://localhost:8080"
+
 spring:
   application:
     name: Scrapper

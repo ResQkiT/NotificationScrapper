@@ -1,15 +1,17 @@
 package backend.academy.scrapper;
 
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Getter
-@Setter
-@ConfigurationProperties
-public class DomainsConfig {
-    private String github = "https://api.github.com";
-    private String stackoverflow = "https://api.stackexchange.com/2.3";
-    private String bot = "http://localhost:8090";
-    private String telegramBotUrl = "http://localhost:8080";
+
+@ConfigurationProperties(prefix = "domains")
+public record DomainsConfig(String github, String stackoverflow, String bot, String telegramBotUrl) {
+
+    @PostConstruct
+    public void print() {
+        System.out.println("Github token: " + github());
+        System.out.println("Stackoverflow token: " + stackoverflow());
+        System.out.println("Bot: " + bot());
+        System.out.println("Telegram Bot URL: " + telegramBotUrl());
+    }
 }
