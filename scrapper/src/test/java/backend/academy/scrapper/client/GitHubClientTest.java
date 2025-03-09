@@ -28,8 +28,7 @@ class GitHubClientTest {
         ScrapperConfig scrapperConfig = mock(ScrapperConfig.class);
         when(scrapperConfig.githubToken()).thenReturn("test-token");
 
-        DomainsConfig domainsConfig = new DomainsConfig();
-        domainsConfig.github("http://localhost:8089");
+        DomainsConfig domainsConfig = new DomainsConfig("http://localhost:8089", "", "", "");
 
         RestClient.Builder restClientBuilder = RestClient.builder();
         gitHubClient = new GitHubClient(restClientBuilder, scrapperConfig, domainsConfig);
@@ -37,7 +36,6 @@ class GitHubClientTest {
 
     @Test
     void testGetRepositoryInfo_whenOk_thenReturnRepositoryData() {
-        // Arrange
         String ownerAndRepo = "testOwner/testRepo";
         stubFor(get("/repos/" + ownerAndRepo)
                 .withHeader("Authorization", equalTo("Bearer test-token"))
