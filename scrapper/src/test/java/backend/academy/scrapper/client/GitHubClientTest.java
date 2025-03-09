@@ -36,7 +36,6 @@ class GitHubClientTest {
 
     @Test
     void testGetRepositoryInfo_whenOk_thenReturnRepositoryData() {
-        // Arrange
         String ownerAndRepo = "testOwner/testRepo";
         stubFor(get("/repos/" + ownerAndRepo)
                 .withHeader("Authorization", equalTo("Bearer test-token"))
