@@ -2,11 +2,16 @@ package backend.academy.bot.commands;
 
 import backend.academy.bot.entity.Session;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 @Slf4j
 @Component
 public class HelpCommand extends Command {
+
+    @Autowired
+    List<Command> commands;
 
     @Override
     public String command() {
@@ -21,14 +26,15 @@ public class HelpCommand extends Command {
     @Override
     public void execute(Session session, Object object) {
         log.debug("Help command");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Доступные команды:\n");
+        for (Command command : commands) {
+            if (command instanceof UndefinedCommand) continue;
+            sb.append(command.command() + " " + command.description() + "\n");
+        }
+        sb.append(this.command() + " " + this.description() + "\n");
+        sb.append("Если у вас возникли проблемы - обратитесь в поддержку!\n");
 
-        String text = "Доступные команды:\n" + "/start - Запуск бота\n"
-                + "/help - Получить помощь по командам\n"
-                + "/track <ссылка на ресурс> - Привязать ссылку\n"
-                + "/untrack <ссылка на ресурс> - Отвязать ссылку\n"
-                + "/list - Ваши отслеживаемые ресурсы\n"
-                + "Если у вас возникли проблемы, напишите в поддержку!";
-
-        sendMessage(session.chatId(), text);
+        sendMessage(session.chatId(), sb.toString());
     }
 }

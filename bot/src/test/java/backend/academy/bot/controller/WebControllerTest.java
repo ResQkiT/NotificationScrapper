@@ -9,6 +9,7 @@ import backend.academy.bot.events.SendMessageEvent;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,10 +26,11 @@ class WebControllerTest {
     private WebController webController;
 
     @Test
+    @DisplayName("Обновление: при одном chatId отправляется одно событие с корректными данными")
     void testUpdate_whenSingleChatId_thenOk() {
         IncomingUpdate update = new IncomingUpdate(
-                1L, "https://example.com", "Описание изменения", List.of(12345L) // Один chatId
-                );
+            1L, "https://example.com", "Описание изменения", List.of(12345L) // Один chatId
+        );
 
         webController.update(update);
 
@@ -42,9 +44,10 @@ class WebControllerTest {
     }
 
     @Test
+    @DisplayName("Обновление: при нескольких chatId отправляются соответствующие события с корректными данными")
     void testUpdate_whenMultipleChatIds_thenOk() {
         IncomingUpdate update =
-                new IncomingUpdate(1L, "https://example.com", "Описание изменения", List.of(12345L, 67890L));
+            new IncomingUpdate(1L, "https://example.com", "Описание изменения", List.of(12345L, 67890L));
 
         webController.update(update);
 
@@ -56,12 +59,12 @@ class WebControllerTest {
 
         assertEquals(12345L, capturedEvents.get(0).id());
         assertEquals(
-                "Изменение на странице: https://example.com\n Описание: Описание изменения",
-                capturedEvents.get(0).text());
+            "Изменение на странице: https://example.com\n Описание: Описание изменения",
+            capturedEvents.get(0).text());
 
         assertEquals(67890L, capturedEvents.get(1).id());
         assertEquals(
-                "Изменение на странице: https://example.com\n Описание: Описание изменения",
-                capturedEvents.get(1).text());
+            "Изменение на странице: https://example.com\n Описание: Описание изменения",
+            capturedEvents.get(1).text());
     }
 }

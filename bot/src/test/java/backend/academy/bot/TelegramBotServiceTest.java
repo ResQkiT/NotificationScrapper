@@ -22,6 +22,7 @@ import com.pengrad.telegrambot.request.SetMyCommands;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -46,6 +47,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
+    @DisplayName("Установка команд при запуске: при старте сервиса Telegram все команды устанавливаются")
     void testSetCommandsOnStartup_whenTelegramServiceStart_thenAllCommandsSet() {
         telegramBotService.start();
 
@@ -54,6 +56,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
+    @DisplayName("Обработка неизвестной команды: при отправке неизвестной команды отправляется ответ о неизвестной команде")
     void testHandlUnknownCommand_whenUserSendUnknownCommand_thenTgServiceSendUnknownCommand() {
         Long chatId = 123L;
         Update update = createUpdateWithText(chatId, "unknown_command");
@@ -71,6 +74,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
+    @DisplayName("Обработка состояния ожидания тегов: при получении тегов в состоянии WAITING_FOR_TAGS выполняется команда")
     void testHandleWaitingForTagsState_whenUserHasWaitingForTags_thenPerformNormal() {
         Long chatId = 123L;
         Update update = createUpdateWithText(chatId, "tag1,tag2");
@@ -88,6 +92,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
+    @DisplayName("Отправка сообщения: при корректных данных сообщение отправляется успешно")
     void testSendMessageCorrectly_whenAllOk_thenAllOk() {
         telegramBotService.sendMessage(123L, "Test message");
 
@@ -100,6 +105,7 @@ class TelegramBotServiceTest {
     }
 
     @Test
+    @DisplayName("Обработка события SendMessageEvent: при корректных данных сообщение отправляется успешно")
     void testHandleSendMessageEvent_thenAllOk_thenAllOk() {
         SendMessageEvent event = new SendMessageEvent(123L, "Test event");
 

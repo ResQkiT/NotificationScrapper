@@ -26,7 +26,7 @@ public class UntrackLinkCommand extends Command {
 
     @Override
     public String description() {
-        return "<url> - подписаться на обновления ссылки";
+        return "<url> - отписаться от обновления ссылки";
     }
 
     @Override

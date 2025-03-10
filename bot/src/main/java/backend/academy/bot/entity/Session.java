@@ -41,7 +41,7 @@ public class Session {
 
     public void setLinksTags(List<String> tags, States nextState) {
         if (this.buildedLink == null)
-            throw new RuntimeException("Trying to add tags with current working link is null");
+            throw new IllegalStateException("Trying to add tags with current working link is null");
 
         buildedLink.tags(tags);
         this.state(nextState);
@@ -49,7 +49,7 @@ public class Session {
 
     public void setLinksFilters(List<String> filters, States nextState) {
         if (this.buildedLink == null)
-            throw new RuntimeException("Trying to add filters with current working link is null");
+            throw new IllegalStateException("Trying to add filters with current working link is null");
 
         buildedLink.filters(filters);
         this.state(nextState);

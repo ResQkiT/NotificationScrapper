@@ -69,7 +69,7 @@ public class TrackLinkCommand extends Command {
 
         session.setLinksTags(tagsList, States.WAITING_FOR_FILTERS);
 
-        sendMessage(session.chatId(), "Введите фильры через запятую: ");
+        sendMessage(session.chatId(), "Введите фильтры через запятую: ");
     }
 
     private void waitingForFilters(Session session, Object args) {

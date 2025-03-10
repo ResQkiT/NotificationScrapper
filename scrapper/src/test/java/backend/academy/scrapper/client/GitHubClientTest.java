@@ -15,6 +15,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
@@ -35,17 +36,18 @@ class GitHubClientTest {
     }
 
     @Test
+    @DisplayName("Получение информации о репозитории: при успешном запросе возвращаются данные репозитория")
     void testGetRepositoryInfo_whenOk_thenReturnRepositoryData() {
         String ownerAndRepo = "testOwner/testRepo";
         stubFor(get("/repos/" + ownerAndRepo)
-                .withHeader("Authorization", equalTo("Bearer test-token"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("{" + "\"full_name\": \"testOwner/testRepo\","
-                                + "\"updated_at\": \"2024-01-01T12:00:00Z\","
-                                + "\"default_branch\": \"main\""
-                                + "}")));
+            .withHeader("Authorization", equalTo("Bearer test-token"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{" + "\"full_name\": \"testOwner/testRepo\","
+                    + "\"updated_at\": \"2024-01-01T12:00:00Z\","
+                    + "\"default_branch\": \"main\""
+                    + "}")));
 
         ResponseEntity<GitHubResponseDto> response = gitHubClient.getRepositoryInfo(ownerAndRepo);
 

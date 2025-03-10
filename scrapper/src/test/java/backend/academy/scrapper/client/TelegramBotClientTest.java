@@ -14,6 +14,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
@@ -47,11 +48,12 @@ public class TelegramBotClientTest {
     }
 
     @Test
+    @DisplayName("Отправка обновления: при успешном запросе возвращается статус 200")
     public void testSendUpdate() {
         LinkUpdate linkUpdate = new LinkUpdate(1L, "example.com", "test", List.of(123L, 456L));
         stubFor(post(urlEqualTo("/update"))
-                .withHeader("Content-Type", equalTo("application/json"))
-                .willReturn(aResponse().withStatus(200)));
+            .withHeader("Content-Type", equalTo("application/json"))
+            .willReturn(aResponse().withStatus(200)));
 
         ResponseEntity<Void> response = telegramBotClient.sendUpdate(linkUpdate);
 

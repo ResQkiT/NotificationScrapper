@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 public class UserRepositoryTest {
 
@@ -18,6 +19,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Добавление пользователя: при валидном пользователе пользователь добавляется в репозиторий")
     public void testAddUser_whenValidUser_thenUserIsAdded() {
         User user = new User(1L);
         userRepository.addUser(user);
@@ -27,6 +29,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Добавление пользователя: при null пользователе ничего не происходит")
     public void testAddUser_whenNullUser_thenDoNothing() {
         userRepository.addUser(null);
 
@@ -34,6 +37,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Удаление пользователя: если пользователь существует, он удаляется и возвращается true")
     public void testRemoveUser_whenUserExists_thenUserIsRemoved() {
         User user = new User(2L);
         userRepository.addUser(user);
@@ -46,6 +50,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Удаление пользователя: если пользователь не существует, возвращается false")
     public void testRemoveUser_whenUserDoesNotExist_thenReturnFalse() {
         User user = new User(3L);
 
@@ -56,6 +61,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Поиск пользователя по ID: если пользователь существует, он возвращается")
     public void testFindUserById_whenUserExists_thenReturnUser() {
         User user = new User(4L);
         userRepository.addUser(user);
@@ -67,6 +73,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Поиск пользователя по ID: если пользователь не существует, возвращается пустой Optional")
     public void testFindUserById_whenUserDoesNotExist_thenReturnEmpty() {
         Optional<User> foundUser = userRepository.findUserById(5L);
 
@@ -74,6 +81,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Получение всех пользователей: если пользователи существуют, возвращается их список")
     public void testGetAllUsers_whenUsersExist_thenReturnAllUsers() {
         User user1 = new User(6L);
         User user2 = new User(7L);
@@ -89,6 +97,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Получение всех пользователей: если пользователей нет, возвращается пустой список")
     public void testGetAllUsers_whenNoUsers_thenReturnEmptySet() {
         Set<User> allUsers = userRepository.getAllUsers();
 
@@ -96,6 +105,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверка существования пользователя: если пользователь существует, возвращается true")
     public void testUserExists_whenUserExists_thenReturnTrue() {
         User user = new User(8L);
         userRepository.addUser(user);
@@ -104,11 +114,13 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Проверка существования пользователя: если пользователь не существует, возвращается false")
     public void testUserExists_whenUserDoesNotExist_thenReturnFalse() {
         assertFalse(userRepository.userExists(9L));
     }
 
     @Test
+    @DisplayName("Получение количества пользователей: при добавлении пользователей возвращается корректное количество")
     public void testGetUserCount_whenUsersAdded_thenReturnCorrectCount() {
         userRepository.addUser(new User(10L));
         userRepository.addUser(new User(11L));
@@ -117,6 +129,7 @@ public class UserRepositoryTest {
     }
 
     @Test
+    @DisplayName("Получение количества пользователей: если пользователей нет, возвращается 0")
     public void testGetUserCount_whenNoUsers_thenReturnZero() {
         assertEquals(0, userRepository.getUserCount());
     }

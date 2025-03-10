@@ -1,5 +1,6 @@
 package backend.academy.bot.clients;
 
+import backend.academy.bot.DomainsConfig;
 import backend.academy.bot.dto.AddLinkRequest;
 import backend.academy.bot.dto.LinkResponse;
 import backend.academy.bot.dto.ListLinksResponse;
@@ -19,11 +20,12 @@ import org.springframework.web.client.RestClient;
 public class ScrapperClient {
 
     private final RestClient restClient;
-    private static final String SCHEDULER_SERVICE_URL = "http://localhost:8081";
+    private final String SCHEDULER_SERVICE_URL;
     private static final String TG_ID_HEADER = "Tg-Chat-Id";
 
     @Autowired
-    public ScrapperClient(RestClient.Builder restClientBuilder) {
+    public ScrapperClient(RestClient.Builder restClientBuilder, DomainsConfig domainsConfig) {
+        this.SCHEDULER_SERVICE_URL = domainsConfig.scrapper();
         this.restClient = restClientBuilder.baseUrl(SCHEDULER_SERVICE_URL).build();
     }
 

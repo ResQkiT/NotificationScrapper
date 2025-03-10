@@ -7,6 +7,7 @@ import backend.academy.scrapper.entity.Link;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 public class LinkRepositoryTest {
 
@@ -18,6 +19,7 @@ public class LinkRepositoryTest {
     }
 
     @Test
+    @DisplayName("Добавление ссылки: при валидных данных ссылка добавляется и возвращается")
     public void testAddLink_whenValidInput_thenReturnLinkAndStoreIt() {
         Long userId = 1L;
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("tag1"), List.of("filter1"));
@@ -31,6 +33,7 @@ public class LinkRepositoryTest {
     }
 
     @Test
+    @DisplayName("Получение ссылок: если ссылок нет, возвращается пустой список")
     public void testGetLinks_whenNoLinks_thenReturnEmptyList() {
         Long userId = 2L;
         List<Link> links = repository.getLinks(userId);
@@ -39,6 +42,7 @@ public class LinkRepositoryTest {
     }
 
     @Test
+    @DisplayName("Удаление ссылки: если ссылка существует, она удаляется и возвращается true")
     public void testRemoveLink_whenLinkExists_thenReturnTrueAndRemoveLink() {
         Long userId = 3L;
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("tag1"), List.of("filter1"));
@@ -50,6 +54,7 @@ public class LinkRepositoryTest {
     }
 
     @Test
+    @DisplayName("Удаление ссылки: если ссылка не существует, возвращается false")
     public void testRemoveLink_whenLinkDoesNotExist_thenReturnFalse() {
         Long userId = 4L;
         boolean removed = repository.removeLink(userId, "http://nonexistent.com");
@@ -57,12 +62,13 @@ public class LinkRepositoryTest {
     }
 
     @Test
+    @DisplayName("Обновление ссылки: если ссылка существует, она обновляется для всех чатов")
     public void testUpdateLink_whenLinkExists_thenUpdateLinkForAllChats() {
         Long userId = 5L;
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("tag1"), List.of("filter1"));
         Link originalLink = repository.addLink(userId, request);
         Link updatedLink =
-                new Link(originalLink.id(), originalLink.url(), List.of("updatedTag"), List.of("updatedFilter"));
+            new Link(originalLink.id(), originalLink.url(), List.of("updatedTag"), List.of("updatedFilter"));
         updatedLink.chatsId().add(userId);
         Link resultLink = repository.updateLink(updatedLink);
         assertNotNull(resultLink);

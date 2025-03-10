@@ -12,6 +12,7 @@ import backend.academy.scrapper.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,8 @@ public class UserControllerTest {
     public void setup() {
         userController = new UserController(userService);
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
-                .setControllerAdvice(new TestExceptionHandler())
-                .build();
+            .setControllerAdvice(new TestExceptionHandler())
+            .build();
     }
 
     @RestControllerAdvice
@@ -47,6 +48,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Регистрация чата: при валидном ID возвращается статус 200")
     public void testRegisterChat_whenValidId_thenReturnOk() throws Exception {
         Long id = 123L;
         doNothing().when(userService).registerUser(id);
@@ -57,6 +59,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Регистрация чата: при невалидном ID возвращается ошибка 400")
     public void testRegisterChat_whenInvalidId_thenReturnBadRequest() throws Exception {
         Long invalidId = 0L;
 
@@ -64,6 +67,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Удаление чата: при валидном ID и существующем пользователе возвращается статус 200")
     public void testDeleteChat_whenValidIdAndUserExists_thenReturnOk() throws Exception {
         Long id = 123L;
         when(userService.userExists(id)).thenReturn(true);
@@ -75,6 +79,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Удаление чата: при невалидном ID возвращается ошибка 400")
     public void testDeleteChat_whenInvalidId_thenReturnBadRequest() throws Exception {
         Long invalidId = -1L;
 
@@ -82,6 +87,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Удаление чата: если пользователь не найден, возвращается ошибка 404")
     public void testDeleteChat_whenUserNotFound_thenReturnNotFound() throws Exception {
         Long id = 123L;
         when(userService.userExists(id)).thenReturn(false);
