@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
@@ -51,8 +51,8 @@ public class LinkControllerTest {
         objectMapper = new ObjectMapper();
         linkController = new LinkController(userService, linkService);
         mockMvc = MockMvcBuilders.standaloneSetup(linkController)
-            .setControllerAdvice(new TestExceptionHandler())
-            .build();
+                .setControllerAdvice(new TestExceptionHandler())
+                .build();
     }
 
     @RestControllerAdvice
@@ -76,9 +76,9 @@ public class LinkControllerTest {
         when(linkService.getAllLinks(chatId)).thenReturn(List.of(dummyLink));
 
         mockMvc.perform(get("/links").header("Tg-Chat-Id", chatId))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.links[0].id").value(1))
-            .andExpect(jsonPath("$.links[0].url").value("http://example.com"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.links[0].id").value(1))
+                .andExpect(jsonPath("$.links[0].url").value("http://example.com"));
     }
 
     @Test
@@ -110,12 +110,12 @@ public class LinkControllerTest {
         when(linkService.addLink(eq(chatId), any(AddLinkRequest.class))).thenReturn(dummyLink);
 
         mockMvc.perform(post("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.url").value("http://example.com"));
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.url").value("http://example.com"));
     }
 
     @Test
@@ -124,10 +124,10 @@ public class LinkControllerTest {
         Long chatId = -1L;
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("t1", "t2"), List.of("f1", "f2"));
         mockMvc.perform(post("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -136,10 +136,10 @@ public class LinkControllerTest {
         Long chatId = 123L;
         AddLinkRequest request = new AddLinkRequest("", List.of("t1", "t2"), List.of("f1", "f2"));
         mockMvc.perform(post("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -149,10 +149,10 @@ public class LinkControllerTest {
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("t1", "t2"), List.of("f1", "f2"));
         when(userService.userExists(chatId)).thenReturn(false);
         mockMvc.perform(post("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isNotFound());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -169,12 +169,12 @@ public class LinkControllerTest {
         when(linkService.removeLink(chatId, "http://example.com")).thenReturn(dummyLink);
 
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.url").value("http://example.com"));
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.url").value("http://example.com"));
     }
 
     @Test
@@ -183,10 +183,10 @@ public class LinkControllerTest {
         Long chatId = 0L;
         RemoveLinkRequest request = new RemoveLinkRequest("http://example.com");
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -195,10 +195,10 @@ public class LinkControllerTest {
         Long chatId = 123L;
         RemoveLinkRequest request = new RemoveLinkRequest("");
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -208,10 +208,10 @@ public class LinkControllerTest {
         RemoveLinkRequest request = new RemoveLinkRequest("http://example.com");
         when(userService.userExists(chatId)).thenReturn(false);
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isNotFound());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -222,9 +222,9 @@ public class LinkControllerTest {
         when(userService.userExists(chatId)).thenReturn(true);
         when(linkService.removeLink(chatId, "http://example.com")).thenReturn(null);
         mockMvc.perform(delete("/links")
-                .header("Tg-Chat-Id", chatId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isNotFound());
+                        .header("Tg-Chat-Id", chatId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
     }
 }

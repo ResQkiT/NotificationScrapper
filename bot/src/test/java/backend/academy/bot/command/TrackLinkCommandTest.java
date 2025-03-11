@@ -10,9 +10,9 @@ import backend.academy.bot.entity.States;
 import backend.academy.bot.events.SendMessageEvent;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.DisplayName;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -74,13 +74,13 @@ class TrackLinkCommandTest {
     @DisplayName("Проверка валидности URL: корректные и некорректные URL проверяются правильно")
     void testIsValidURL_whenUrlIsCorrectOrIncorrect_thenPerformOk() {
         assertThat(TrackLinkCommand.isValidURL("https://stackoverflow.com/questions/12345/valid-question"))
-            .isTrue();
+                .isTrue();
         assertThat(TrackLinkCommand.isValidURL("https://github.com/user/repository"))
-            .isTrue();
+                .isTrue();
         assertThat(TrackLinkCommand.isValidURL("https://github.com/user/repository/"))
-            .isTrue();
+                .isTrue();
         assertThat(TrackLinkCommand.isValidURL("https://stackoverflow.com/questions/invalid"))
-            .isFalse();
+                .isFalse();
         assertThat(TrackLinkCommand.isValidURL("https://example.com/somepage")).isFalse();
         assertThat(TrackLinkCommand.isValidURL("invalid-url")).isFalse();
     }

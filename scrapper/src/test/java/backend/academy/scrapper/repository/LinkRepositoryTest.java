@@ -6,8 +6,8 @@ import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.entity.Link;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class LinkRepositoryTest {
 
@@ -68,7 +68,7 @@ public class LinkRepositoryTest {
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("tag1"), List.of("filter1"));
         Link originalLink = repository.addLink(userId, request);
         Link updatedLink =
-            new Link(originalLink.id(), originalLink.url(), List.of("updatedTag"), List.of("updatedFilter"));
+                new Link(originalLink.id(), originalLink.url(), List.of("updatedTag"), List.of("updatedFilter"));
         updatedLink.chatsId().add(userId);
         Link resultLink = repository.updateLink(updatedLink);
         assertNotNull(resultLink);

@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import backend.academy.scrapper.exeptions.ScrapperException;
 import backend.academy.scrapper.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.DisplayName;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +35,8 @@ public class UserControllerTest {
     public void setup() {
         userController = new UserController(userService);
         mockMvc = MockMvcBuilders.standaloneSetup(userController)
-            .setControllerAdvice(new TestExceptionHandler())
-            .build();
+                .setControllerAdvice(new TestExceptionHandler())
+                .build();
     }
 
     @RestControllerAdvice

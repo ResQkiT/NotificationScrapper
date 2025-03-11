@@ -21,6 +21,10 @@ public class LinkService {
         return linkRepository.getLinks(id);
     }
 
+    public boolean hasLink(Long id, AddLinkRequest linkRequest) {
+        return linkRepository.hasLink(id, linkRequest);
+    }
+
     public Link addLink(Long id, AddLinkRequest linkRequest) {
         return linkRepository.addLink(id, linkRequest);
     }

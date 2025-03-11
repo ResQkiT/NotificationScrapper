@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -55,7 +55,7 @@ public class TrackLinkCommand extends Command {
 
         session.startLinkCreation(new Link(url), States.WAITING_FOR_TAGS);
 
-        sendMessage(session.chatId(), "Введите теги через запятую: ");
+        sendMessage(session.chatId(), "Введите теги через запятую ( - если если тегов нет): ");
     }
 
     private void waitingForTags(Session session, Object args) {
@@ -69,7 +69,7 @@ public class TrackLinkCommand extends Command {
 
         session.setLinksTags(tagsList, States.WAITING_FOR_FILTERS);
 
-        sendMessage(session.chatId(), "Введите фильтры через запятую: ");
+        sendMessage(session.chatId(), "Введите фильтры через запятую ( - если фильтров нет): ");
     }
 
     private void waitingForFilters(Session session, Object args) {
@@ -87,8 +87,10 @@ public class TrackLinkCommand extends Command {
         var response =
                 scrapperClient.addLink(session.chatId(), new AddLinkRequest(link.url(), link.tags(), link.filters()));
 
-        if (response.getStatusCode() == HttpStatusCode.valueOf(200)) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             sendMessage(session.chatId(), "Новая ссылка: " + link.url() + " добавлена");
+        } else if (response.getStatusCode() == HttpStatus.NOT_ACCEPTABLE) {
+            sendMessage(session.chatId(), "Такая ссылка уже добавлена!");
         } else {
             sendMessage(session.chatId(), "К сожалению ссылка не была отслежена. Обратитесь в поддержку...");
         }

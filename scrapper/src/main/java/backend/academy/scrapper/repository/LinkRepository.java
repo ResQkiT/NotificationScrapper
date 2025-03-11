@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public class LinkRepository {
     private static AtomicLong id = new AtomicLong();
 
-    private final Map<Long, List<Link>> userLinks = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, List<Link>> userLinks = new ConcurrentHashMap<>();
 
     public Link addLink(Long userId, AddLinkRequest linkRequest) {
         long newId = id.incrementAndGet();
@@ -21,6 +21,11 @@ public class LinkRepository {
         link.chatsId().add(userId);
         userLinks.computeIfAbsent(userId, k -> new ArrayList<>()).add(link);
         return link;
+    }
+
+    public boolean hasLink(Long userId, AddLinkRequest linkRequest) {
+        List<Link> links = getLinks(userId);
+        return links.stream().anyMatch(link -> link.url().equals(linkRequest.link()));
     }
 
     public boolean removeLink(Long userId, String url) {

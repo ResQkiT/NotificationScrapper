@@ -67,23 +67,21 @@ public class TelegramBotService {
         }
 
         switch (session.state()) {
-            case DEFAULT -> {
+            case DEFAULT:
                 String[] parts = messageText.split(" ", 2);
                 String rawCommand = parts[0];
                 String args = (parts.length > 1) ? parts[1] : "";
                 commandFactory.getCommand(rawCommand).execute(session, args);
-            }
-            case WAITING_FOR_TAGS -> {
-                // парсим теги из строки
-                String[] tags = messageText.split(",");
-                List<String> list = Arrays.asList(tags);
+                break;
+            case WAITING_FOR_TAGS:
+            case WAITING_FOR_FILTERS:
+                List<String> list = new ArrayList<>();
+                if (!messageText.equals("-")) {
+                    String[] tof = messageText.split(","); // tof is for TagOrFilter list
+                    list.addAll(Arrays.asList(tof));
+                }
                 commandFactory.getCommand("/track").execute(session, list);
-            }
-            case WAITING_FOR_FILTERS -> {
-                String[] filters = messageText.split(",");
-                List<String> list = Arrays.asList(filters);
-                commandFactory.getCommand("/track").execute(session, list);
-            }
+                break;
         }
     }
 

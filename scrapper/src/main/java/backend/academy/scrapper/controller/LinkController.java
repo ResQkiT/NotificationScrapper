@@ -74,6 +74,10 @@ public class LinkController {
             throw new ScrapperException("Пользователь с данным ID не найден", HttpStatus.NOT_FOUND);
         }
 
+        if (linkService.hasLink(chatId, request)) {
+            throw new ScrapperException("Такая ссылка уже существует", HttpStatus.NOT_ACCEPTABLE);
+        }
+
         Link link = linkService.addLink(chatId, request);
 
         LinkResponse response = new LinkResponse(link.id(), link.url(), link.tags(), link.filters());
