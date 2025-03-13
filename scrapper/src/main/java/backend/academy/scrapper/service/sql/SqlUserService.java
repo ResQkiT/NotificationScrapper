@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@ConditionalOnProperty(name = "app.access-type", havingValue = "SQL")
+@ConditionalOnProperty(name = "db.access-type", havingValue = "SQL")
 public class SqlUserService implements UserService {
 
     private final SqlUserRepository userRepository;
