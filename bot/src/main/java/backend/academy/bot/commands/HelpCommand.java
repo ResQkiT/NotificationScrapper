@@ -1,32 +1,40 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.service.TelegramBotService;
-import backend.academy.bot.session.Session;
+import backend.academy.bot.entity.Session;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class HelpCommand extends Command {
 
+    @Autowired
+    List<Command> commands;
+
     @Override
-    public String getName() {
+    public String command() {
         return "/help";
+    }
+
+    @Override
+    public String description() {
+        return "Выводит меню с доступными командами";
     }
 
     @Override
     public void execute(Session session, Object object) {
         log.debug("Help command");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Доступные команды:\n");
+        for (Command command : commands) {
+            if (command instanceof UndefinedCommand) continue;
+            sb.append(command.command() + " " + command.description() + "\n");
+        }
+        sb.append(this.command() + " " + this.description() + "\n");
+        sb.append("Если у вас возникли проблемы - обратитесь в поддержку!\n");
 
-        String text =  "Доступные команды:\n" +
-            "/start - Запуск бота\n" +
-            "/register - Регистрация в боте\n" +
-            "/help - Получить помощь по командам\n" +
-            "/track <ссылка на ресурс> - Привязать ссылку\n" +
-            "/untrack <ссылка на ресурс> - Отвязать ссылку\n" +
-            "/list - Ваши отслеживаемые ресурсы\n" +
-            "Если у вас возникли проблемы, напишите в поддержку!";
-
-        sendMessage(session.chatId(), text);
+        sendMessage(session.chatId(), sb.toString());
     }
 }

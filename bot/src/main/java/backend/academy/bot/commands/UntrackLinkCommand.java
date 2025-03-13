@@ -1,33 +1,63 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.service.TelegramBotService;
-import backend.academy.bot.session.Session;
+import backend.academy.bot.clients.ScrapperClient;
+import backend.academy.bot.dto.RemoveLinkRequest;
+import backend.academy.bot.entity.Session;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class UntrackLinkCommand extends Command {
 
+    private final ScrapperClient scrapperClient;
+
+    @Autowired
+    public UntrackLinkCommand(ScrapperClient scrapperClient) {
+        this.scrapperClient = scrapperClient;
+    }
+
     @Override
-    public String getName() {
+    public String command() {
         return "/untrack";
     }
 
     @Override
+    public String description() {
+        return "<url> - отписаться от обновления ссылки";
+    }
+
+    @Override
     public void execute(Session session, Object args) {
-        if (!(args instanceof String link) || link.isEmpty()) {
+        if (!(args instanceof String url) || url.isEmpty()) {
             sendMessage(session.chatId(), "Ошибка: укажите ссылку для удаления.");
             return;
         }
 
-        // TODO: Логика для удаления ссылки, например:
-        // boolean removed = linkRepository.removeLink(session.getUserId(), link);
+        if (!session.hasLink(url)) {
+            log.warn("Ссылка {} не найдена у пользователя {}", url, session.chatId());
+            sendMessage(session.chatId(), "Такой ссылки не существует");
+            return;
+        }
 
-        // Если ссылка успешно удалена, то сообщение будет таким:
-        // telegramBotService.sendMessage(session.chatId(), "Ссылка " + link + " удалена.");
+        log.info("Удаление ссылки {} из локального хранилища", url);
+        session.removeLink(url);
 
-        // Временно возвращаем строку
-        sendMessage(session.chatId(), "Тут будет реализована машина состояний. Команда для удаления ссылки");
+        log.info("Отправка запроса на удаление ссылки {} через scrapperClient", url);
+        var removeLinkResponse = scrapperClient.removeLink(session.chatId(), new RemoveLinkRequest(url));
+
+        if (removeLinkResponse.getStatusCode() == HttpStatusCode.valueOf(200)) {
+            log.info("Ссылка {} успешно удалена у пользователя {}", url, session.chatId());
+            sendMessage(session.chatId(), "Ссылка " + url + " удалена из отслеживаемых");
+        } else {
+            log.error(
+                    "Ошибка при удалении ссылки {} у пользователя {}. Код ответа: {}",
+                    url,
+                    session.chatId(),
+                    removeLinkResponse.getStatusCode());
+            sendMessage(session.chatId(), "Что-то пошло не так");
+        }
     }
 }

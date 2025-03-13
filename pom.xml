@@ -45,6 +45,9 @@
         <checker-qual.version>3.48.3</checker-qual.version>
         <jspecify.version>1.0.0</jspecify.version>
 
+        <spring-boot-configuration-processor.version>3.4.2</spring-boot-configuration-processor.version>
+        <lombok.version>1.18.26</lombok.version>
+
         <!-- plugins -->
         <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
@@ -62,7 +65,7 @@
         <!-- spotbugs -->
         <spotbugs.version>4.9.0</spotbugs.version>
         <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
-        <findsecbugs.version>LATEST</findsecbugs.version>
+        <findsecbugs.version>1.13.0</findsecbugs.version>
         <spotbugs-slf4j.version>1.5.0</spotbugs-slf4j.version>
     </properties>
 
@@ -275,7 +278,7 @@
                         <dependency>
                             <groupId>com.github.spotbugs</groupId>
                             <artifactId>spotbugs</artifactId>
-
+                            <version>${spotbugs.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
