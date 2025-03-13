@@ -2,7 +2,7 @@ package backend.academy.scrapper.processor;
 
 import backend.academy.scrapper.clients.GitHubClient;
 import backend.academy.scrapper.dto.GitHubResponseDto;
-import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.LinkService;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;

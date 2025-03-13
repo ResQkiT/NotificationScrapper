@@ -2,7 +2,7 @@ package backend.academy.scrapper.scheduler;
 
 import backend.academy.scrapper.clients.TelegramBotClient;
 import backend.academy.scrapper.dto.LinkUpdate;
-import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.processor.Processor;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.UserService;
@@ -35,7 +35,7 @@ public class LinkScheduler {
                         String result = processor.process(link);
 
                         if (result != null) {
-                            telegramBotClient.sendUpdate(new LinkUpdate(link.id(), link.url(), result, link.chatsId()));
+                            //telegramBotClient.sendUpdate(new LinkUpdate(link.id(), link.url(), result, link.chatsId()));
                         }
                     }
                 }

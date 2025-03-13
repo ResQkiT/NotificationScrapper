@@ -1,6 +1,6 @@
 package backend.academy.scrapper.processor;
 
-import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.LinkService;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,11 +36,11 @@ public abstract class Processor {
     }
 
     protected boolean hasUpdates(OffsetDateTime respUpdatesTime, Link link) {
-        return respUpdatesTime.isAfter(link.lastUpdatedAt());
+        return respUpdatesTime.isAfter(OffsetDateTime.from(link.lastUpdatedAt()));
     }
 
     protected Link updateLink(Link link, OffsetDateTime updatedAt) {
-        link.lastUpdatedAt(updatedAt);
+        link.lastUpdatedAt(updatedAt.toInstant());
         return service().updateLink(link);
     }
 }
