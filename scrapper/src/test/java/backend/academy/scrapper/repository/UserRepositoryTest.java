@@ -2,7 +2,7 @@ package backend.academy.scrapper.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import backend.academy.scrapper.entity.User;
+import backend.academy.scrapper.model.User;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;

@@ -4,7 +4,9 @@ import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.LinkService;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 public abstract class Processor {
     private final String host;
@@ -32,15 +34,19 @@ public abstract class Processor {
     }
 
     protected boolean isFirstTimeProcessing(Link link) {
-        return link.lastUpdatedAt() == null;
+        return link.lastCheckedAt() == null;
     }
 
     protected boolean hasUpdates(OffsetDateTime respUpdatesTime, Link link) {
-        return respUpdatesTime.isAfter(OffsetDateTime.from(link.lastUpdatedAt()));
+        LocalDateTime respLocalDateTime = respUpdatesTime.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+        System.out.println("Новое время:"+ respUpdatesTime);
+        System.out.println("Старое время:"+ link.lastUpdatedAt());
+        return respLocalDateTime.isAfter(link.lastUpdatedAt());
     }
 
     protected Link updateLink(Link link, OffsetDateTime updatedAt) {
-        link.lastUpdatedAt(updatedAt.toInstant());
+        OffsetDateTime utcUpdatedAt = updatedAt.withOffsetSameInstant(ZoneOffset.UTC);
+        link.lastUpdatedAt(utcUpdatedAt.toLocalDateTime());
         return service().updateLink(link);
     }
 }

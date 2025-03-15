@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -22,21 +23,25 @@ public class JpaUserService implements UserService {
 
     @Override
     public void registerUser(Long id) {
-
+        if (!userRepository.existsById(id)) {
+            User user = new User();
+            user.id(id);
+            userRepository.save(user);
+        }
     }
 
     @Override
     public void removeUser(Long id) {
-
+        userRepository.deleteById(id);
     }
 
     @Override
     public List<User> getAllUsers() {
-        return List.of();
+        return userRepository.findAll();
     }
 
     @Override
     public boolean userExists(Long id) {
-        return false;
+        return userRepository.existsById(id);
     }
 }

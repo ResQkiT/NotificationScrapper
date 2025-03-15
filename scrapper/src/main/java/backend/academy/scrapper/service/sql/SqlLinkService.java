@@ -3,11 +3,13 @@ package backend.academy.scrapper.service.sql;
 import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.model.User;
+import backend.academy.scrapper.repository.LinkRepository;
 import backend.academy.scrapper.repository.UserRepository;
 import backend.academy.scrapper.repository.sql.SqlLinkRepository;
 import backend.academy.scrapper.repository.sql.SqlUserRepository;
 import backend.academy.scrapper.service.LinkService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 @ConditionalOnProperty(name = "db.access-type", havingValue = "SQL")
 public class SqlLinkService implements LinkService {
 
@@ -30,26 +33,26 @@ public class SqlLinkService implements LinkService {
 
     @Override
     public boolean hasLink(Long id, String linkUrl) {
-        return false;
+        return linkRepository.hasLink(id, linkUrl);
     }
 
     @Override
     public List<Link> getAllLinks(Long id) {
-        return List.of();
+        return linkRepository.getLinks(id);
     }
 
     @Override
     public Link addLink(Long id, AddLinkRequest linkRequest) {
-        return null;
+        return linkRepository.addLink(id, linkRequest);
     }
 
     @Override
     public Link updateLink(Link link) {
-        return null;
+        return linkRepository.updateLink(link);
     }
 
     @Override
     public Link removeLink(Long chatId, String url) {
-        return null;
+        return linkRepository.removeLink(chatId, url);
     }
 }

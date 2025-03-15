@@ -3,9 +3,15 @@ package backend.academy.scrapper.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import backend.academy.scrapper.dto.AddLinkRequest;
-import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.model.Filter;
+import backend.academy.scrapper.model.Link;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import backend.academy.scrapper.model.Tag;
+import backend.academy.scrapper.model.User;
+import backend.academy.scrapper.repository.sql.SqlLinkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +22,7 @@ public class LinkRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        repository = new LinkRepository();
+        repository = new SqlLinkRepository();
     }
 
     @Test
@@ -27,7 +33,7 @@ public class LinkRepositoryTest {
         Link link = repository.addLink(userId, request);
         assertNotNull(link);
         assertEquals("http://example.com", link.url());
-        assertTrue(link.chatsId().contains(userId));
+        assertTrue(link.users().contains(new User(1L)));
         List<Link> links = repository.getLinks(userId);
         assertEquals(1, links.size());
         assertEquals(link, links.get(0));
@@ -69,8 +75,8 @@ public class LinkRepositoryTest {
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("tag1"), List.of("filter1"));
         Link originalLink = repository.addLink(userId, request);
         Link updatedLink =
-                new Link(originalLink.id(), originalLink.url(), List.of("updatedTag"), List.of("updatedFilter"));
-        updatedLink.chatsId().add(userId);
+                new Link(originalLink.id(), originalLink.url(), LocalDateTime.now(), LocalDateTime.now(), null, List.of(new Tag("tag1")), List.of(new Filter("filter1")));
+        updatedLink.users().add(new User(userId));
         Link resultLink = repository.updateLink(updatedLink);
         assertNotNull(resultLink);
         assertEquals("http://example.com", resultLink.url());

@@ -24,6 +24,7 @@ public class GitHubProcessor extends Processor {
         GitHubResponseDto linkInfo = fetchRepositoryInfo(link);
 
         if (isFirstTimeProcessing(link)) {
+            System.out.println("First time processing " + link);
             updateLink(link, linkInfo.updatedAt());
             return null;
         }

@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.dto.RemoveLinkRequest;
-import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.exeptions.ScrapperException;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.UserService;

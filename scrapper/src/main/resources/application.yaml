@@ -11,7 +11,7 @@ domains:
   telegram-bot-url: "http://localhost:8080"
 
 db:
-  access-type: SQL # или SQL
+  access-type: JPA # JPA или SQL
 
 spring:
   application:
