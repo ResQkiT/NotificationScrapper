@@ -3,7 +3,7 @@ package backend.academy.scrapper.processor;
 import backend.academy.scrapper.clients.GitHubClient;
 import backend.academy.scrapper.dto.GitHubResponseDto;
 import backend.academy.scrapper.model.Link;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.ILinkService;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class GitHubProcessor extends Processor {
     private final GitHubClient client;
 
     @Autowired
-    public GitHubProcessor(GitHubClient client, LinkService linkService) {
+    public GitHubProcessor(GitHubClient client, ILinkService linkService) {
         super("github.com", linkService);
         this.client = client;
     }

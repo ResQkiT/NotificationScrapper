@@ -1,7 +1,7 @@
 package backend.academy.scrapper.processor;
 
 import backend.academy.scrapper.model.Link;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.ILinkService;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
@@ -10,9 +10,9 @@ import java.time.ZoneOffset;
 
 public abstract class Processor {
     private final String host;
-    private final LinkService linkService;
+    private final ILinkService linkService;
 
-    protected Processor(String host, LinkService service) {
+    protected Processor(String host, ILinkService service) {
         this.host = host;
         this.linkService = service;
     }
@@ -29,7 +29,7 @@ public abstract class Processor {
         return uri.getHost().equals(this.host);
     }
 
-    public LinkService service() {
+    public ILinkService service() {
         return linkService;
     }
 

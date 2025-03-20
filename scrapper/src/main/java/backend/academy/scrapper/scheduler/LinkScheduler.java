@@ -1,10 +1,9 @@
 package backend.academy.scrapper.scheduler;
 
 import backend.academy.scrapper.clients.TelegramBotClient;
-import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.processor.Processor;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.ILinkService;
 import backend.academy.scrapper.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LinkScheduler {
     private final TelegramBotClient telegramBotClient;
-    private final LinkService linkService;
+    private final ILinkService linkService;
     private final UserService userService;
 
     private final List<Processor> processors;

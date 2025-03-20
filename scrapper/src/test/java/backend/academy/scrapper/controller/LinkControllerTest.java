@@ -14,7 +14,7 @@ import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.dto.RemoveLinkRequest;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.exeptions.ScrapperException;
-import backend.academy.scrapper.service.LinkService;
+import backend.academy.scrapper.service.ILinkService;
 import backend.academy.scrapper.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class LinkControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private LinkService linkService;
+    private ILinkService linkService;
 
     @Mock
     private UserService userService;

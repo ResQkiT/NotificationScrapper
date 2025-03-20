@@ -1,17 +1,41 @@
 package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.model.User;
-import java.util.List;
+import backend.academy.scrapper.repository.UserRepository;
+import backend.academy.scrapper.repository.sql.SqlUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
-public interface UserService {
+public class UserService implements IUserService {
+    private final UserRepository userRepository;
 
-    void registerUser(Long id);
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    void removeUser(Long id);
+    @Override
+    public boolean userExists(Long id) {
+        return userRepository.userExists(id);
+    }
 
-    List<User> getAllUsers();
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.getAllUsers();
+    }
 
-     boolean userExists(Long id);
+    @Override
+    public void removeUser(Long id) {
+        if(userRepository.userExists(id)) {
+            userRepository.removeUserById(id);
+        }
+    }
+
+    @Override
+    public void registerUser(Long id) {
+        userRepository.addUser(new User(id, LocalDateTime.now()));
+    }
 }

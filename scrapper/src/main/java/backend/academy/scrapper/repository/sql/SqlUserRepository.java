@@ -37,11 +37,6 @@ public class SqlUserRepository implements UserRepository {
     }
 
     @Override
-    public boolean removeUser(User user) {
-        int rows = jdbcTemplate.update("DELETE FROM users WHERE id = ?", user.id());
-        return rows > 0;
-    }
-
     public boolean removeUserById(Long id){
         int rows = jdbcTemplate.update("DELETE FROM users WHERE id = ?", id);
         return rows > 0;

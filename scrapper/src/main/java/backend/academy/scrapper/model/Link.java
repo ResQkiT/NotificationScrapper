@@ -62,4 +62,13 @@ public class Link {
         this.lastUpdatedAt = lastUpdatedAt;
         this.lastCheckedAt = lastCheckedAt;
     }
+
+    public Link(String url, LocalDateTime lastUpdatedAt, LocalDateTime lastCheckedAt, List<Tag> tags, List<Filter> filters) {
+        this.url = url;
+        this.lastUpdatedAt = lastUpdatedAt;
+        this.lastCheckedAt = lastCheckedAt;
+        this.tags = tags;
+        this.filters = filters;
+
+    }
 }
