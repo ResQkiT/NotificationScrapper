@@ -1,7 +1,7 @@
 package backend.academy.scrapper.processor;
 
 import backend.academy.scrapper.clients.StackOverflowClient;
-import backend.academy.scrapper.dto.StackOverflowResponseDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.ILinkService;
 import java.net.URI;

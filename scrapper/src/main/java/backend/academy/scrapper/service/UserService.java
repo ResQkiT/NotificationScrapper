@@ -2,14 +2,14 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.repository.UserRepository;
-import backend.academy.scrapper.repository.sql.SqlUserRepository;
+import java.time.OffsetDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class UserService implements IUserService {
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -29,13 +29,13 @@ public class UserService implements IUserService {
 
     @Override
     public void removeUser(Long id) {
-        if(userRepository.userExists(id)) {
+        if (userRepository.userExists(id)) {
             userRepository.removeUserById(id);
         }
     }
 
     @Override
     public void registerUser(Long id) {
-        userRepository.addUser(new User(id, LocalDateTime.now()));
+        userRepository.addUser(new User(id, OffsetDateTime.now()));
     }
 }

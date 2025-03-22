@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.clients.StackOverflowClient;
-import backend.academy.scrapper.dto.StackOverflowResponseDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.BeforeEach;

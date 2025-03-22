@@ -10,11 +10,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
@@ -31,60 +32,59 @@ public class JpaLinkRepository implements LinkRepository {
             throw new EntityNotFoundException("User not found");
         }
 
-        // 1. Найти ссылку или создать новую
-        Link link = entityManager.createQuery(
-                "SELECT l FROM Link l WHERE l.url = :url", Link.class)
-            .setParameter("url", linkRequest.link())
-            .getResultStream()
-            .findFirst()
-            .orElseGet(() -> {
-                Link newLink = new Link(linkRequest.link(), LocalDateTime.now(), LocalDateTime.now(), new ArrayList<>(), new ArrayList<>());
-                entityManager.persist(newLink);
-                return newLink;
-            });
+        Link link = entityManager
+                .createQuery("SELECT l FROM Link l WHERE l.url = :url", Link.class)
+                .setParameter("url", linkRequest.link())
+                .getResultStream()
+                .findFirst()
+                .orElseGet(() -> {
+                    Link newLink = new Link(
+                            linkRequest.link(),
+                            OffsetDateTime.now(),
+                            OffsetDateTime.now(),
+                            new ArrayList<>(),
+                            new ArrayList<>());
+                    entityManager.persist(newLink);
+                    return newLink;
+                });
 
-        // 2. Найти или создать теги
         List<Tag> tags = linkRequest.tags().stream()
-            .map(tagName -> entityManager.createQuery(
-                    "SELECT t FROM Tag t WHERE t.name = :name", Tag.class)
-                .setParameter("name", tagName)
-                .getResultStream()
-                .findFirst()
-                .orElseGet(() -> {
-                    Tag newTag = new Tag(tagName);
-                    entityManager.persist(newTag);
-                    return newTag;
-                }))
-            .toList();
+                .map(tagName -> entityManager
+                        .createQuery("SELECT t FROM Tag t WHERE t.name = :name", Tag.class)
+                        .setParameter("name", tagName)
+                        .getResultStream()
+                        .findFirst()
+                        .orElseGet(() -> {
+                            Tag newTag = new Tag(tagName);
+                            entityManager.persist(newTag);
+                            return newTag;
+                        }))
+                .toList();
 
-        // 3. Найти или создать фильтры
         List<Filter> filters = linkRequest.filters().stream()
-            .map(filterName -> entityManager.createQuery(
-                    "SELECT f FROM Filter f WHERE f.name = :name", Filter.class)
-                .setParameter("name", filterName)
-                .getResultStream()
-                .findFirst()
-                .orElseGet(() -> {
-                    Filter newFilter = new Filter(filterName);
-                    entityManager.persist(newFilter);
-                    return newFilter;
-                }))
-            .toList();
+                .map(filterName -> entityManager
+                        .createQuery("SELECT f FROM Filter f WHERE f.name = :name", Filter.class)
+                        .setParameter("name", filterName)
+                        .getResultStream()
+                        .findFirst()
+                        .orElseGet(() -> {
+                            Filter newFilter = new Filter(filterName);
+                            entityManager.persist(newFilter);
+                            return newFilter;
+                        }))
+                .toList();
 
-        // 4. Добавить связь user ↔ link
         if (!user.links().contains(link)) {
             user.links().add(link);
             link.users().add(user);
         }
 
-        // 5. Добавить ТОЛЬКО НОВЫЕ связи link ↔ tags
         for (Tag tag : tags) {
             if (!link.tags().contains(tag)) {
                 link.tags().add(tag);
             }
         }
 
-        // 6. Добавить ТОЛЬКО НОВЫЕ связи link ↔ filters (чтобы не дублировались)
         for (Filter filter : filters) {
             if (!link.filters().contains(filter)) {
                 link.filters().add(filter);
@@ -96,12 +96,12 @@ public class JpaLinkRepository implements LinkRepository {
 
     @Override
     public boolean hasLink(Long userId, String url) {
-        Long count = entityManager.createQuery(
-                "SELECT COUNT(l) FROM Link l JOIN l.users u WHERE u.id = :userId AND l.url = :url",
-                Long.class
-            ).setParameter("userId", userId)
-            .setParameter("url", url)
-            .getSingleResult();
+        Long count = entityManager
+                .createQuery(
+                        "SELECT COUNT(l) FROM Link l JOIN l.users u WHERE u.id = :userId AND l.url = :url", Long.class)
+                .setParameter("userId", userId)
+                .setParameter("url", url)
+                .getSingleResult();
         return count > 0;
     }
 
@@ -113,12 +113,12 @@ public class JpaLinkRepository implements LinkRepository {
             throw new EntityNotFoundException("User not found");
         }
 
-        Link link = entityManager.createQuery(
-                "SELECT l FROM Link l WHERE l.url = :url", Link.class)
-            .setParameter("url", url)
-            .getResultStream()
-            .findFirst()
-            .orElseThrow(() -> new EntityNotFoundException("Link not found"));
+        Link link = entityManager
+                .createQuery("SELECT l FROM Link l WHERE l.url = :url", Link.class)
+                .setParameter("url", url)
+                .getResultStream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Link not found"));
 
         user.links().remove(link);
         link.users().remove(user);
@@ -133,18 +133,22 @@ public class JpaLinkRepository implements LinkRepository {
 
     @Override
     public List<Link> getLinks(Long userId) {
-        List<Link> links = entityManager.createQuery(
-                "SELECT l FROM Link l JOIN l.users u WHERE u.id = :userId", Link.class)
-            .setParameter("userId", userId)
-            .getResultList();
+        List<Link> links = entityManager
+                .createQuery("SELECT l FROM Link l JOIN l.users u WHERE u.id = :userId", Link.class)
+                .setParameter("userId", userId)
+                .getResultList();
 
-        // Инициализация tags и filters (Lazy-загрузка)
         links.forEach(link -> {
-            link.tags().size();   // Принудительная инициализация
-            link.filters().size(); // Принудительная инициализация
+            link.tags().size();
+            link.filters().size();
         });
 
         return links;
+    }
+
+    @Override
+    public List<Link> getAllLinksWithDelay(Duration delay) {
+        return List.of();
     }
 
     @Override
@@ -152,15 +156,13 @@ public class JpaLinkRepository implements LinkRepository {
         return entityManager.merge(link);
     }
 
-
     private void removeOrphanedTagsAndFilters(Link link) {
-        List<Tag> orphanedTags = link.tags().stream()
-            .filter(tag -> tag.links().size() == 1)
-            .toList();
+        List<Tag> orphanedTags =
+                link.tags().stream().filter(tag -> tag.links().size() == 1).toList();
 
         List<Filter> orphanedFilters = link.filters().stream()
-            .filter(filter -> filter.links().size() == 1)
-            .toList();
+                .filter(filter -> filter.links().size() == 1)
+                .toList();
 
         orphanedTags.forEach(entityManager::remove);
         orphanedFilters.forEach(entityManager::remove);

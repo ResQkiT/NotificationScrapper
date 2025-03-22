@@ -3,10 +3,10 @@ package backend.academy.scrapper.service;
 import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.repository.LinkRepository;
-import backend.academy.scrapper.repository.sql.SqlLinkRepository;
+import java.time.Duration;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class LinkService implements ILinkService {
@@ -26,6 +26,11 @@ public class LinkService implements ILinkService {
     @Override
     public List<Link> getAllLinks(Long id) {
         return linkRepository.getLinks(id);
+    }
+
+    @Override
+    public List<Link> getAllLinksWithDelay(Duration delay) {
+        return linkRepository.getAllLinksWithDelay(delay);
     }
 
     @Override

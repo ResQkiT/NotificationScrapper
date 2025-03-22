@@ -2,7 +2,6 @@ package backend.academy.scrapper.service;
 
 import backend.academy.scrapper.model.User;
 import java.util.List;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,5 +13,5 @@ public interface IUserService {
 
     List<User> getAllUsers();
 
-     boolean userExists(Long id);
+    boolean userExists(Long id);
 }

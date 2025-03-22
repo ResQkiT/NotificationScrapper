@@ -2,7 +2,7 @@ package backend.academy.scrapper.clients;
 
 import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
-import backend.academy.scrapper.dto.StackOverflowResponseDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

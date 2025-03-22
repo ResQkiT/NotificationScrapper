@@ -5,13 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.model.Filter;
 import backend.academy.scrapper.model.Link;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import backend.academy.scrapper.model.Tag;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.repository.sql.SqlLinkRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,8 +72,14 @@ public class LinkRepositoryTest {
         Long userId = 5L;
         AddLinkRequest request = new AddLinkRequest("http://example.com", List.of("tag1"), List.of("filter1"));
         Link originalLink = repository.addLink(userId, request);
-        Link updatedLink =
-                new Link(originalLink.id(), originalLink.url(), LocalDateTime.now(), LocalDateTime.now(), null, List.of(new Tag("tag1")), List.of(new Filter("filter1")));
+        Link updatedLink = new Link(
+                originalLink.id(),
+                originalLink.url(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                null,
+                List.of(new Tag("tag1")),
+                List.of(new Filter("filter1")));
         updatedLink.users().add(new User(userId));
         Link resultLink = repository.updateLink(updatedLink);
         assertNotNull(resultLink);

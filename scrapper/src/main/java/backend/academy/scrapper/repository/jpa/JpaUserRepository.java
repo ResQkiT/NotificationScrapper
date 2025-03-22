@@ -5,10 +5,10 @@ import backend.academy.scrapper.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
@@ -20,7 +20,7 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public void addUser(User user) {
-        if(userExists(user.id())) return;
+        if (userExists(user.id())) return;
 
         entityManager.persist(user);
     }
@@ -47,11 +47,6 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public boolean userExists(Long userId) {
-        Long count = entityManager.createQuery(
-                "SELECT COUNT(u) FROM User u WHERE u.id = :userId", Long.class)
-            .setParameter("userId", userId)
-            .getSingleResult();
-        return count > 0;
+        return entityManager.find(User.class, userId) != null;
     }
 }
-

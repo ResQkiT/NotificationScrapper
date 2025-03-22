@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.clients.GitHubClient;
-import backend.academy.scrapper.dto.GitHubResponseDto;
+import backend.academy.scrapper.dto.git.GitHubResponseDto;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.BeforeEach;
