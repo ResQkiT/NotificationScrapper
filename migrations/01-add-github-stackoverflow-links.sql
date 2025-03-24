@@ -5,25 +5,31 @@ ALTER TABLE links ADD COLUMN type VARCHAR(31);
 -- Создаем таблицу для StackOverflow-ссылок
 CREATE TABLE IF NOT EXISTS stackoverflow_links (
     link_id BIGINT PRIMARY KEY REFERENCES links(id) ON DELETE CASCADE,
-    question_title VARCHAR NOT NULL,
-    username VARCHAR NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    preview_content VARCHAR,
-    last_answer_date TIMESTAMP WITH TIME ZONE
+
+    answer_last_id BIGINT NOT NULL,
+    answer_last_username VARCHAR NOT NULL,
+    answer_created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    answer_preview_description VARCHAR,
+
+    comment_id BIGINT NOT NULL,
+    comment_last_username VARCHAR NOT NULL,
+    comment_created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    comment_preview_description VARCHAR
 );
 
 -- Создаем таблицу для GitHub-ссылок
 CREATE TABLE IF NOT EXISTS github_links (
     link_id BIGINT PRIMARY KEY REFERENCES links(id) ON DELETE CASCADE,
+
     issue_last_id BIGINT NOT NULL,
     issue_title VARCHAR NOT NULL,
     issue_creator_username VARCHAR NOT NULL,
     issue_created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    issue_preview_description VARCHAR(200),
+    issue_preview_description VARCHAR,
 
     pull_last_id BIGINT NOT NULL,
     pull_title VARCHAR NOT NULL,
     pull_creator_username VARCHAR NOT NULL,
     pull_created_at TIMESTAMP WITH TIME ZONE,
-    pull_preview_description VARCHAR(200)
+    pull_preview_description VARCHAR
 );

@@ -31,7 +31,6 @@ public class GitHubProcessor extends Processor {
     @Override
     public String process(Link link) {
         GitHubResponseDto linkInfo = fetchRepositoryInfo(link);
-
         GitHubIssueDto currentIssue = fetchIssue(link).getFirst();
         GitHubPullRequestDto currentPull = fetchPullRequest(link).getFirst();
 
@@ -55,17 +54,16 @@ public class GitHubProcessor extends Processor {
             return null;
         }
         touchLink(link);
-
         GitHubLink existedLink = gitHubLinkService.findById(link.id()).orElse(null);
-        // теперь проверяем наличие изменений
         StringBuilder answer = new StringBuilder();
 
+        //Todo: пока работаем только с issues (C точки зрения гита pr = issues, так что в теории этого достаточно)
         if (!Objects.equals(existedLink.lastIssueId(), currentIssue.id())) {
             updateOrSave(relevantLink);
             answer.append("Появилось новое issue: " + currentIssue.title() + "\n");
             answer.append("Автор:" + currentIssue.user().username() + "\n");
             answer.append("Дата создания:" + currentIssue.createdAt() + "\n");
-            answer.append("Описание:" + currentIssue.body() + "\n");
+            answer.append("Описание:" + cutBody(currentIssue.body()) + "\n");
 
             return answer.toString();
         }
@@ -85,31 +83,27 @@ public class GitHubProcessor extends Processor {
         String ownerAndRepo = getOwnerAndRepo(link);
 
         var response = client.getRepositoryInfo(ownerAndRepo);
-        checkSuccess(response);
 
+        assertSuccess(response, new RuntimeException("Cant fetch repository info: GitHub API is unavailable"));
         return response.getBody();
     }
 
     private List<GitHubIssueDto> fetchIssue(Link link) {
         String ownerAndRepo = getOwnerAndRepo(link);
+
         var response = client.getRepositoryIssues(ownerAndRepo);
-        checkSuccess(response);
+
+        assertSuccess(response, new RuntimeException("Cant fetch repository issues: GitHub API is unavailable"));
         return response.getBody();
     }
 
     private List<GitHubPullRequestDto> fetchPullRequest(Link link) {
         String ownerAndRepo = getOwnerAndRepo(link);
+
         var response = client.getRepositoryPullRequests(ownerAndRepo);
-        checkSuccess(response);
 
+        assertSuccess(response, new RuntimeException("Cant fetch repository pulls: GitHub API is unavailable"));
         return response.getBody();
-    }
-
-    private boolean checkSuccess(ResponseEntity<?> response) {
-        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-            throw new RuntimeException("GitHub API is unavailable");
-        }
-        return true;
     }
 
     private String getOwnerAndRepo(Link link) {

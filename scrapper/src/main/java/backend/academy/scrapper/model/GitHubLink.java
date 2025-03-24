@@ -7,15 +7,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
+
+@Entity
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(callSuper = true)
 @Accessors(chain = true)
-@Entity
 @Table(name = "github_links")
 @PrimaryKeyJoinColumn(name = "link_id") // Связь с основной таблицей links
 public class GitHubLink extends Link {
