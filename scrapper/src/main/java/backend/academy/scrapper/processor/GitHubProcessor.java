@@ -11,8 +11,8 @@ import backend.academy.scrapper.service.ILinkService;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,45 +30,88 @@ public class GitHubProcessor extends Processor {
 
     @Override
     public String process(Link link) {
-        GitHubResponseDto linkInfo = fetchRepositoryInfo(link);
-        GitHubIssueDto currentIssue = fetchIssue(link).getFirst();
-        GitHubPullRequestDto currentPull = fetchPullRequest(link).getFirst();
+        Optional<GitHubIssueDto> lastIssue = getLastIssue(link);
+        Optional<GitHubPullRequestDto> lastPull = getLastPullRequest(link);
 
-        GitHubLink relevantLink = new GitHubLink(
-                currentIssue.id(),
-                currentIssue.title(),
-                currentIssue.user().username(),
-                currentIssue.createdAt(),
-                currentIssue.body(),
-                currentPull.id(),
-                currentPull.title(),
-                currentPull.user().username(),
-                currentPull.createdAt(),
-                currentPull.body());
-        relevantLink.id(link.id());
-
-        if (isFirstTimeProcessing(link)) {
-            System.out.println("First time processing " + link);
-            touchLink(link);
-            updateOrSave(relevantLink);
+        if (lastIssue.isEmpty() && lastPull.isEmpty()) {
             return null;
         }
-        touchLink(link);
-        GitHubLink existedLink = gitHubLinkService.findById(link.id()).orElse(null);
-        StringBuilder answer = new StringBuilder();
 
-        //Todo: пока работаем только с issues (C точки зрения гита pr = issues, так что в теории этого достаточно)
-        if (!Objects.equals(existedLink.lastIssueId(), currentIssue.id())) {
-            updateOrSave(relevantLink);
-            answer.append("Появилось новое issue: " + currentIssue.title() + "\n");
-            answer.append("Автор:" + currentIssue.user().username() + "\n");
-            answer.append("Дата создания:" + currentIssue.createdAt() + "\n");
-            answer.append("Описание:" + cutBody(currentIssue.body()) + "\n");
+        GitHubLink relevantLink = buildRelevantLink(link, lastIssue, lastPull);
+        return handleUpdates(link, relevantLink, lastIssue, lastPull);
+    }
 
-            return answer.toString();
+    private String handleUpdates(
+            Link link,
+            GitHubLink newLink,
+            Optional<GitHubIssueDto> lastIssue,
+            Optional<GitHubPullRequestDto> lastPull) {
+        StringBuilder response = new StringBuilder();
+        boolean hasUpdates = false;
+
+        if (isFirstTimeProcessing(link)) {
+            updateOrSave(newLink);
+            touchLink(link);
+            return null;
         }
 
+        GitHubLink existingLink = gitHubLinkService.findById(link.id()).orElse(null);
+        if (existingLink == null) {
+            return null;
+        }
+
+        // Check issues
+        if (lastIssue.isPresent()) {
+            GitHubIssueDto issue = lastIssue.get();
+            if (!Objects.equals(existingLink.lastIssueId(), issue.id())) {
+                response.append(formatIssueMessage(issue));
+                hasUpdates = true;
+            }
+        }
+
+        // Check pull requests
+        if (lastPull.isPresent()) {
+            GitHubPullRequestDto pull = lastPull.get();
+            if (!Objects.equals(existingLink.lastPullRequestId(), pull.id())) {
+                response.append(formatPullRequestMessage(pull));
+                hasUpdates = true;
+            }
+        }
+
+        if (hasUpdates) {
+            updateOrSave(newLink);
+            touchLink(link);
+            return response.toString();
+        }
+
+        touchLink(link);
         return null;
+    }
+
+    private GitHubLink buildRelevantLink(
+            Link link, Optional<GitHubIssueDto> issue, Optional<GitHubPullRequestDto> pull) {
+        GitHubLink gitHubLink = new GitHubLink();
+        gitHubLink.id(link.id());
+
+        issue.ifPresent(i -> {
+            gitHubLink
+                    .lastIssueId(i.id())
+                    .lastIssueTitle(i.title())
+                    .issueCreatorUsername(i.user() != null ? i.user().username() : "Unknown")
+                    .issueCreatedAt(i.createdAt())
+                    .issuePreviewDescription(cutBody(i.body()));
+        });
+
+        pull.ifPresent(p -> {
+            gitHubLink
+                    .lastPullRequestId(p.id())
+                    .lastPullRequestTitle(p.title())
+                    .pullCreatorUsername(p.user() != null ? p.user().username() : "Unknown")
+                    .pullCreatedAt(p.createdAt())
+                    .pullPreviewDescription(cutBody(p.body()));
+        });
+
+        return gitHubLink;
     }
 
     private void updateOrSave(GitHubLink link) {
@@ -76,6 +119,24 @@ public class GitHubProcessor extends Processor {
             gitHubLinkService.updateLink(link);
         } else {
             gitHubLinkService.createLink(link);
+        }
+    }
+
+    private Optional<GitHubIssueDto> getLastIssue(Link link) {
+        try {
+            List<GitHubIssueDto> issues = fetchIssue(link);
+            return issues.isEmpty() ? Optional.empty() : Optional.of(issues.getFirst());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<GitHubPullRequestDto> getLastPullRequest(Link link) {
+        try {
+            List<GitHubPullRequestDto> pulls = fetchPullRequest(link);
+            return pulls.isEmpty() ? Optional.empty() : Optional.of(pulls.getFirst());
+        } catch (Exception e) {
+            return Optional.empty();
         }
     }
 
@@ -104,6 +165,24 @@ public class GitHubProcessor extends Processor {
 
         assertSuccess(response, new RuntimeException("Cant fetch repository pulls: GitHub API is unavailable"));
         return response.getBody();
+    }
+
+    private String formatIssueMessage(GitHubIssueDto issue) {
+        return String.format(
+                "Появилось новое issue:%nНазвание: %s%nАвтор: %s%nДата создания: %s%nОписание: %s%n%n",
+                issue.title(),
+                issue.user() != null ? issue.user().username() : "Неизвестный автор",
+                issue.createdAt(),
+                cutBody(issue.body()));
+    }
+
+    private String formatPullRequestMessage(GitHubPullRequestDto pull) {
+        return String.format(
+                "Появился новый pull request:%nНазвание: %s%nАвтор: %s%nДата создания: %s%nОписание: %s%n%n",
+                pull.title(),
+                pull.user() != null ? pull.user().username() : "Неизвестный автор",
+                pull.createdAt(),
+                cutBody(pull.body()));
     }
 
     private String getOwnerAndRepo(Link link) {

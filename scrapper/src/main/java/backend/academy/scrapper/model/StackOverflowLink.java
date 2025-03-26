@@ -14,7 +14,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Entity
-
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter

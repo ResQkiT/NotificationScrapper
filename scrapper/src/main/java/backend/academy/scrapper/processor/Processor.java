@@ -2,10 +2,10 @@ package backend.academy.scrapper.processor;
 
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.ILinkService;
-import org.springframework.http.ResponseEntity;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
+import org.springframework.http.ResponseEntity;
 
 public abstract class Processor {
     private final String host;
@@ -50,7 +50,7 @@ public abstract class Processor {
         return service().updateLink(link);
     }
 
-    protected boolean assertSuccess(ResponseEntity<?> response, RuntimeException onExaptionCall){
+    protected boolean assertSuccess(ResponseEntity<?> response, RuntimeException onExaptionCall) {
         if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
             throw onExaptionCall;
         }
@@ -58,9 +58,10 @@ public abstract class Processor {
     }
 
     protected String cutBody(String body) {
-        String preview = body.length() > 200
-            ? body.substring(0, body.lastIndexOf(' ', 200)) + "..."
-            : body;
+        if (body == null || body.isEmpty()) {
+            return "";
+        }
+        String preview = body.length() > 200 ? body.substring(0, body.lastIndexOf(' ', 200)) + "..." : body;
         return preview;
     }
 }

@@ -9,10 +9,11 @@ import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.model.StackOverflowLink;
 import backend.academy.scrapper.service.ILinkService;
+import backend.academy.scrapper.service.StackOverflowLinkService;
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.util.Objects;
-import backend.academy.scrapper.service.StackOverflowLinkService;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,7 +22,10 @@ public class StackOverflowProcessor extends Processor {
     private final StackOverflowClient stackOverflowClient;
     private final StackOverflowLinkService stackOverflowLinkService;
 
-    public StackOverflowProcessor(StackOverflowClient stackOverflowClient, ILinkService linkService, StackOverflowLinkService stackOverflowLinkService) {
+    public StackOverflowProcessor(
+            StackOverflowClient stackOverflowClient,
+            ILinkService linkService,
+            StackOverflowLinkService stackOverflowLinkService) {
         super("stackoverflow.com", linkService);
         this.stackOverflowClient = stackOverflowClient;
         this.stackOverflowLinkService = stackOverflowLinkService;
@@ -29,61 +33,95 @@ public class StackOverflowProcessor extends Processor {
 
     @Override
     public String process(Link link) {
-        StackOverflowResponseDto questionInfo = fetchQuestionInfo(link);
 
-        StackOverflowAnswersListDto answersListDto = fetchAnswers(link);
-        StackOverflowAnswerDto lastAnswer = answersListDto.answers().getFirst();
+        StackOverflowAnswersListDto answers = fetchAnswers(link);
+        StackOverflowCommentsListDto comments = fetchComments(link);
 
-        StackOverflowCommentsListDto commentsListDto = fetchComments(link);
-        StackOverflowCommentDto lastComment =  commentsListDto.comments().getFirst();
-        System.out.println(lastAnswer);
-        System.out.println(lastComment);
-        StackOverflowLink relevantLink = new StackOverflowLink(
-            lastAnswer.answerId(),
-            lastAnswer.owner().displayName(),
-            lastAnswer.createdAt().atOffset(ZoneOffset.UTC),
-            lastAnswer.body(),
+        Optional<StackOverflowAnswerDto> lastAnswer = getLastAnswer(answers);
+        Optional<StackOverflowCommentDto> lastComment = getLastComment(comments);
 
-            lastComment.commendId(),
-            lastComment.owner().displayName(),
-            lastComment.createdAt().atOffset(ZoneOffset.UTC),
-            lastComment.body()
-        );
-        relevantLink.id(link.id());
-        System.out.println(relevantLink);
-        if (isFirstTimeProcessing(link)) {
-            System.out.println("First time processing " + link);
-            touchLink(link);
-            updateOrSave(relevantLink);
+        if (lastAnswer.isEmpty() && lastComment.isEmpty()) {
             return null;
         }
+
+        StackOverflowLink relevantLink = buildRelevantLink(link, lastAnswer, lastComment);
+
+        return handleUpdates(link, relevantLink, lastAnswer, lastComment);
+    }
+
+    private String handleUpdates(
+            Link link,
+            StackOverflowLink newLink,
+            Optional<StackOverflowAnswerDto> lastAnswer,
+            Optional<StackOverflowCommentDto> lastComment) {
+        StringBuilder response = new StringBuilder();
+        System.out.println(newLink);
+        if (isFirstTimeProcessing(link)) {
+            System.out.println("ТРогаем впервый раз");
+            updateOrSave(newLink);
+            touchLink(link);
+            return null;
+        }
+
+        StackOverflowLink existingLink =
+                stackOverflowLinkService.findById(link.id()).orElse(null);
+
+        if (existingLink == null) {
+            return null;
+        }
+
+        lastAnswer.ifPresent(a -> {
+            if (!Objects.equals(a.answerId(), existingLink.answerLastId())) {
+                updateOrSave(newLink);
+                response.append("Появился новый ответ\n");
+                response.append("Автор: " + a.owner().displayName() + "\n");
+                response.append("Дата создания: " + a.createdAt() + "\n");
+                response.append("Описание: ").append(cutBody(a.body())).append("\n");
+            }
+        });
+
+        lastComment.ifPresent(c -> {
+            if (!Objects.equals(c.commendId(), existingLink.commentId())) {
+                updateOrSave(newLink);
+                response.append("Появился новый комментарий\n");
+                response.append("Автор: " + c.owner().displayName() + "\n");
+                response.append("Дата создания: " + c.createdAt() + "\n");
+                response.append("Описание: ").append(cutBody(c.body())).append("\n");
+            }
+        });
+
+        if (!response.isEmpty()) {
+            updateOrSave(newLink);
+            touchLink(link);
+            return response.toString();
+        }
+
         touchLink(link);
-        StackOverflowLink existedLink = stackOverflowLinkService.findById(link.id()).orElse(null);
-        StringBuilder answer = new StringBuilder();
-
-        if (!Objects.equals(existedLink.answerLastId(), lastAnswer.answerId())) {
-            updateOrSave(relevantLink);
-            answer.append("Появился новый ответ\n");
-            answer.append("Автор:" + lastAnswer.owner().displayName() + "\n");
-            answer.append("Дата создания:" + lastAnswer.createdAt() + "\n");
-            answer.append("Описание: ").append(cutBody(lastAnswer.body())).append("\n");
-
-            return answer.toString();
-        }
-
-        if (!Objects.equals(existedLink.commentId(), lastComment.commendId())) {
-            updateOrSave(relevantLink);
-            answer.append("Появился новый коментарий\n");
-            answer.append("Автор:" + lastComment.owner().displayName() + "\n");
-            answer.append("Дата создания:" + lastComment.createdAt() + "\n");
-
-
-            answer.append("Описание: ").append(cutBody(lastComment.body())).append("\n");
-
-            return answer.toString();
-        }
-
         return null;
+    }
+
+    private StackOverflowLink buildRelevantLink(
+            Link link, Optional<StackOverflowAnswerDto> answer, Optional<StackOverflowCommentDto> comment) {
+        StackOverflowLink stackOverflowLink = new StackOverflowLink();
+        stackOverflowLink.id(link.id());
+
+        answer.ifPresent(a -> {
+            stackOverflowLink
+                    .answerLastId(a.answerId())
+                    .answerLastUsername(a.owner() != null ? a.owner().displayName() : "Unknown")
+                    .answerCreatedAt(a.createdAt().atOffset(ZoneOffset.UTC))
+                    .answerPreviewDescription(cutBody(a.body()));
+        });
+
+        comment.ifPresent(c -> {
+            stackOverflowLink
+                    .commentId(c.commendId())
+                    .commentLastUsername(c.owner() != null ? c.owner().displayName() : "Unknown")
+                    .commentCreatedAt(c.createdAt().atOffset(ZoneOffset.UTC))
+                    .commentPreviewDescription(cutBody(c.body()));
+        });
+
+        return stackOverflowLink;
     }
 
     private void updateOrSave(StackOverflowLink link) {
@@ -92,6 +130,18 @@ public class StackOverflowProcessor extends Processor {
         } else {
             stackOverflowLinkService.createLink(link);
         }
+    }
+
+    private Optional<StackOverflowAnswerDto> getLastAnswer(StackOverflowAnswersListDto dto) {
+        return (dto != null && !dto.answers().isEmpty())
+                ? Optional.of(dto.answers().getFirst())
+                : Optional.empty();
+    }
+
+    private Optional<StackOverflowCommentDto> getLastComment(StackOverflowCommentsListDto dto) {
+        return (dto != null && !dto.comments().isEmpty())
+                ? Optional.of(dto.comments().getFirst())
+                : Optional.empty();
     }
 
     private StackOverflowResponseDto fetchQuestionInfo(Link link) {
@@ -118,7 +168,8 @@ public class StackOverflowProcessor extends Processor {
         Long questionId = extractQuestionId(uri.getPath());
 
         var response = stackOverflowClient.getQuestionComments(questionId);
-        assertSuccess(response, new RuntimeException("Cant fetch question comments : StackOverflow API is unavailable"));
+        assertSuccess(
+                response, new RuntimeException("Cant fetch question comments : StackOverflow API is unavailable"));
         return response.getBody();
     }
 

@@ -13,9 +13,9 @@ import org.springframework.web.client.RestClient;
 @Service
 public class StackOverflowClient extends Client {
     private static final String SITE = "stackoverflow";
-    private static final String QUESTION_FILTER = "!9Z(-wzu0T"; // Включает body вопроса
-    private static final String ANSWER_FILTER = "withbody";    // Включает body ответов
-    private static final String COMMENT_FILTER = "withbody";      // Включает body комментариев
+    private static final String QUESTION_FILTER = "!9Z(-wzu0T";
+    private static final String ANSWER_FILTER = "withbody";
+    private static final String COMMENT_FILTER = "withbody";
 
     private final String API_KEY;
     private final String ACCESS_TOKEN;
@@ -23,7 +23,7 @@ public class StackOverflowClient extends Client {
 
     @Autowired
     public StackOverflowClient(
-        RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
+            RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
         super(restClientBuilder.build());
         this.API_KEY = scrapperConfig.stackOverflow().key();
         this.ACCESS_TOKEN = scrapperConfig.stackOverflow().accessToken();
@@ -32,47 +32,44 @@ public class StackOverflowClient extends Client {
 
     public ResponseEntity<StackOverflowResponseDto> getQuestionInfo(Long questionId) {
         return client().get()
-            .uri(baseUrl + "/questions/{id}",
-                uriBuilder -> uriBuilder
-                    .queryParam("site", SITE)
-                    .queryParam("filter", QUESTION_FILTER)
-                    .queryParam("key", API_KEY)
-                    .queryParam("access_token", ACCESS_TOKEN)
-                .build(questionId))
-            .header("Accept", "application/json")
-            .retrieve()
-            .toEntity(StackOverflowResponseDto.class);
+                .uri(baseUrl + "/questions/{id}", uriBuilder -> uriBuilder
+                        .queryParam("site", SITE)
+                        .queryParam("filter", QUESTION_FILTER)
+                        .queryParam("key", API_KEY)
+                        .queryParam("access_token", ACCESS_TOKEN)
+                        .build(questionId))
+                .header("Accept", "application/json")
+                .retrieve()
+                .toEntity(StackOverflowResponseDto.class);
     }
 
     public ResponseEntity<StackOverflowAnswersListDto> getQuestionAnswers(Long questionId) {
         return client().get()
-            .uri(baseUrl + "/questions/{id}/answers",
-                uriBuilder -> uriBuilder
-                    .queryParam("site", SITE)
-                    .queryParam("filter", ANSWER_FILTER)
-                    .queryParam("order", "desc")
-                    .queryParam("sort", "creation")
-                    .queryParam("key", API_KEY)
-                    .queryParam("access_token", ACCESS_TOKEN)
-                .build(questionId))
-            .header("Accept", "application/json")
-            .retrieve()
-            .toEntity(StackOverflowAnswersListDto.class);
+                .uri(baseUrl + "/questions/{id}/answers", uriBuilder -> uriBuilder
+                        .queryParam("site", SITE)
+                        .queryParam("filter", ANSWER_FILTER)
+                        .queryParam("order", "desc")
+                        .queryParam("sort", "creation")
+                        .queryParam("key", API_KEY)
+                        .queryParam("access_token", ACCESS_TOKEN)
+                        .build(questionId))
+                .header("Accept", "application/json")
+                .retrieve()
+                .toEntity(StackOverflowAnswersListDto.class);
     }
 
     public ResponseEntity<StackOverflowCommentsListDto> getQuestionComments(Long questionId) {
         return client().get()
-            .uri(baseUrl + "/questions/{id}/comments",
-                uriBuilder -> uriBuilder
-                    .queryParam("site", SITE)
-                    .queryParam("filter", COMMENT_FILTER)
-                    .queryParam("order", "desc")
-                    .queryParam("sort", "creation")
-                    .queryParam("key", API_KEY)
-                    .queryParam("access_token", ACCESS_TOKEN)
-                .build(questionId))
-            .header("Accept", "application/json")
-            .retrieve()
-            .toEntity(StackOverflowCommentsListDto.class);
+                .uri(baseUrl + "/questions/{id}/comments", uriBuilder -> uriBuilder
+                        .queryParam("site", SITE)
+                        .queryParam("filter", COMMENT_FILTER)
+                        .queryParam("order", "desc")
+                        .queryParam("sort", "creation")
+                        .queryParam("key", API_KEY)
+                        .queryParam("access_token", ACCESS_TOKEN)
+                        .build(questionId))
+                .header("Accept", "application/json")
+                .retrieve()
+                .toEntity(StackOverflowCommentsListDto.class);
     }
 }

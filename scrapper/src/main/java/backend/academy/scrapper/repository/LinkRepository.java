@@ -17,5 +17,4 @@ public interface LinkRepository {
     List<Link> getAllLinksWithDelay(Duration delay);
 
     Link updateLink(Link link);
-
 }

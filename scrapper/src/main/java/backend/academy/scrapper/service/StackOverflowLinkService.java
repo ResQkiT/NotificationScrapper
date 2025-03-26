@@ -1,7 +1,7 @@
 package backend.academy.scrapper.service;
 
-import backend.academy.scrapper.model.StackOverflowLink;
 import backend.academy.scrapper.model.Link;
+import backend.academy.scrapper.model.StackOverflowLink;
 import backend.academy.scrapper.repository.sql.SqlStackoverflowLinkRepository;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +41,6 @@ public class StackOverflowLinkService {
 
     @Transactional(readOnly = true)
     public boolean existsByUrl(String url) {
-        return repository.findAll().stream()
-            .anyMatch(link -> link.url().equals(url));
+        return repository.findAll().stream().anyMatch(link -> link.url().equals(url));
     }
 }

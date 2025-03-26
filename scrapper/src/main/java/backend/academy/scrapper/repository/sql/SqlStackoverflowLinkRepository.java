@@ -1,17 +1,16 @@
 package backend.academy.scrapper.repository.sql;
 
-import backend.academy.scrapper.model.StackOverflowLink;
 import backend.academy.scrapper.model.Link;
+import backend.academy.scrapper.model.StackOverflowLink;
 import backend.academy.scrapper.repository.LinkRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class SqlStackoverflowLinkRepository {
@@ -26,54 +25,48 @@ public class SqlStackoverflowLinkRepository {
 
     public Link save(StackOverflowLink link) {
         jdbcTemplate.update(
-            "INSERT INTO stackoverflow_links (" +
-                "link_id, answer_last_id, answer_last_username, " +
-                "answer_created_at, answer_preview_description, " +
-                "comment_id, comment_last_username, " +
-                "comment_created_at, comment_preview_description" +
-                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            link.id(),
-            link.answerLastId(),
-            link.answerLastUsername(),
-            link.answerCreatedAt(),
-            link.answerPreviewDescription(),
-            link.commentId(),
-            link.commentLastUsername(),
-            link.commentCreatedAt(),
-            link.commentPreviewDescription()
-        );
+                "INSERT INTO stackoverflow_links (" + "link_id, answer_last_id, answer_last_username, "
+                        + "answer_created_at, answer_preview_description, "
+                        + "comment_id, comment_last_username, "
+                        + "comment_created_at, comment_preview_description"
+                        + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                link.id(),
+                link.answerLastId(),
+                link.answerLastUsername(),
+                link.answerCreatedAt(),
+                link.answerPreviewDescription(),
+                link.commentId(),
+                link.commentLastUsername(),
+                link.commentCreatedAt(),
+                link.commentPreviewDescription());
         return link;
     }
 
     public StackOverflowLink update(StackOverflowLink link) {
         jdbcTemplate.update(
-            "UPDATE stackoverflow_links SET " +
-                "answer_last_id = ?, answer_last_username = ?, " +
-                "answer_created_at = ?, answer_preview_description = ?, " +
-                "comment_id = ?, comment_last_username = ?, " +
-                "comment_created_at = ?, comment_preview_description = ? " +
-                "WHERE link_id = ?",
-            link.answerLastId(),
-            link.answerLastUsername(),
-            link.answerCreatedAt(),
-            link.answerPreviewDescription(),
-            link.commentId(),
-            link.commentLastUsername(),
-            link.commentCreatedAt(),
-            link.commentPreviewDescription(),
-            link.id()
-        );
+                "UPDATE stackoverflow_links SET " + "answer_last_id = ?, answer_last_username = ?, "
+                        + "answer_created_at = ?, answer_preview_description = ?, "
+                        + "comment_id = ?, comment_last_username = ?, "
+                        + "comment_created_at = ?, comment_preview_description = ? "
+                        + "WHERE link_id = ?",
+                link.answerLastId(),
+                link.answerLastUsername(),
+                link.answerCreatedAt(),
+                link.answerPreviewDescription(),
+                link.commentId(),
+                link.commentLastUsername(),
+                link.commentCreatedAt(),
+                link.commentPreviewDescription(),
+                link.id());
         return link;
     }
 
     public Optional<StackOverflowLink> findByParentId(Long id) {
         List<StackOverflowLink> result = jdbcTemplate.query(
-            "SELECT l.id, l.url, sl.* FROM links l " +
-                "JOIN stackoverflow_links sl ON l.id = sl.link_id " +
-                "WHERE l.id = ?",
-            rowMapper,
-            id
-        );
+                "SELECT l.id, l.url, sl.* FROM links l " + "JOIN stackoverflow_links sl ON l.id = sl.link_id "
+                        + "WHERE l.id = ?",
+                rowMapper,
+                id);
         return result.stream().findFirst();
     }
 
@@ -84,10 +77,8 @@ public class SqlStackoverflowLinkRepository {
 
     public List<StackOverflowLink> findAll() {
         return jdbcTemplate.query(
-            "SELECT l.id, l.url, sl.* FROM links l " +
-                "JOIN stackoverflow_links sl ON l.id = sl.link_id",
-            rowMapper
-        );
+                "SELECT l.id, l.url, sl.* FROM links l " + "JOIN stackoverflow_links sl ON l.id = sl.link_id",
+                rowMapper);
     }
 
     private static class StackoverflowLinkRowMapper implements RowMapper<StackOverflowLink> {
