@@ -8,6 +8,11 @@ import static org.mockito.Mockito.when;
 import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
 import backend.academy.scrapper.clients.StackOverflowClient;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswerDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswersListDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentsListDto;
+import backend.academy.scrapper.dto.stackoverflow.StackOverflowQuestionDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.time.OffsetDateTime;
@@ -63,10 +68,74 @@ public class StackOverflowClientTest {
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody().items()).hasSize(1);
 
-        StackOverflowResponseDto.Question question = response.getBody().items().get(0);
+        StackOverflowQuestionDto question = response.getBody().items().getFirst();
         assertThat(question.title()).isEqualTo("Sample Question");
         assertThat(question.lastActivityDate()).isEqualTo(OffsetDateTime.parse("2024-01-01T12:00:00Z"));
         assertThat(question.answerCount()).isEqualTo(5);
         assertThat(question.score()).isEqualTo(10);
+    }
+
+    @Test
+    @DisplayName("Получение ответов на вопрос: при успешном запросе возвращаются данные ответов")
+    void getQuestionAnswers_shouldReturnAnswersData() {
+        Long questionId = 12345L;
+
+        stubFor(get(urlPathEqualTo("/questions/" + questionId + "/answers"))
+                .withQueryParam("site", equalTo("stackoverflow"))
+                .withQueryParam("filter", equalTo("withbody"))
+                .withQueryParam("order", equalTo("desc"))
+                .withQueryParam("sort", equalTo("creation"))
+                .withQueryParam("key", equalTo("test-key"))
+                .withQueryParam("access_token", equalTo("test-access-token"))
+                .withHeader("Accept", equalTo("application/json"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{" + "\"items\": [{"
+                                + "\"answer_id\": 123,"
+                                + "\"body\": \"Sample Answer\""
+                                + "}]}")));
+
+        ResponseEntity<StackOverflowAnswersListDto> response = stackOverflowClient.getQuestionAnswers(questionId);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody().answers()).hasSize(1);
+
+        StackOverflowAnswersListDto answerList = response.getBody();
+        StackOverflowAnswerDto answer = answerList.answers().getFirst();
+
+        assertThat(answer.answerId()).isEqualTo(123);
+        assertThat(answer.body()).isEqualTo("Sample Answer");
+    }
+
+    @Test
+    @DisplayName("Получение комментариев к вопросу: при успешном запросе возвращаются данные комментариев")
+    void getQuestionComments_shouldReturnCommentsData() {
+        Long questionId = 12345L;
+
+        stubFor(get(urlPathEqualTo("/questions/" + questionId + "/comments"))
+                .withQueryParam("site", equalTo("stackoverflow"))
+                .withQueryParam("filter", equalTo("withbody"))
+                .withQueryParam("order", equalTo("desc"))
+                .withQueryParam("sort", equalTo("creation"))
+                .withQueryParam("key", equalTo("test-key"))
+                .withQueryParam("access_token", equalTo("test-access-token"))
+                .withHeader("Accept", equalTo("application/json"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{" + "\"items\": [{"
+                                + "\"comment_id\": 456,"
+                                + "\"body\": \"Sample Comment\""
+                                + "}]}")));
+
+        ResponseEntity<StackOverflowCommentsListDto> response = stackOverflowClient.getQuestionComments(questionId);
+
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody().comments()).hasSize(1);
+
+        StackOverflowCommentDto comment = response.getBody().comments().getFirst();
+        assertThat(comment.commendId()).isEqualTo(456);
+        assertThat(comment.body()).isEqualTo("Sample Comment");
     }
 }
