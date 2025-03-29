@@ -3,45 +3,27 @@ package backend.academy.scrapper.repository.sql;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import backend.academy.scrapper.model.StackOverflowLink;
+import backend.academy.scrapper.repository.BaseRepositoryTest;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
 @Import({SqlStackoverflowLinkRepository.class, SqlLinkRepository.class})
-class SqlStackoverflowLinkRepositoryTest extends BaseSqlRepositoryTest {
+class StackoverflowLinkRepositoryTest extends BaseRepositoryTest {
     @Autowired
     private SqlStackoverflowLinkRepository stackoverflowLinkRepository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-        applyLiquibaseMigrations();
-    }
 
     @Test
     @DisplayName("Сохранение StackOverflowLink: должен сохранять ссылку в базу данных")

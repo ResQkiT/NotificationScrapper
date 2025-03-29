@@ -1,4 +1,4 @@
-package backend.academy.scrapper.repository.sql;
+package backend.academy.scrapper.repository;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -13,20 +13,16 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.DirectoryResourceAccessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@JdbcTest
-@Testcontainers
-public abstract class BaseSqlRepositoryTest {
+public abstract class BaseRepositoryTest {
 
     @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
+    protected static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
@@ -40,6 +36,7 @@ public abstract class BaseSqlRepositoryTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        System.out.println("Setting up database");
         applyLiquibaseMigrations();
     }
 

@@ -4,45 +4,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.model.Link;
+import backend.academy.scrapper.repository.BaseRepositoryTest;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
 @Import(SqlLinkRepository.class)
-class SqlLinkRepositoryTest extends BaseSqlRepositoryTest {
+class LinkRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private SqlLinkRepository linkRepository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-        applyLiquibaseMigrations();
-    }
 
     @Test
     @DisplayName("Добавление ссылки: должна добавлять новую ссылку и подписку")

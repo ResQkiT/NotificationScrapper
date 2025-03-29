@@ -79,17 +79,8 @@ public class JpaLinkRepository implements LinkRepository {
             link.users().add(user);
         }
 
-        for (Tag tag : tags) {
-            if (!link.tags().contains(tag)) {
-                link.tags().add(tag);
-            }
-        }
-
-        for (Filter filter : filters) {
-            if (!link.filters().contains(filter)) {
-                link.filters().add(filter);
-            }
-        }
+        link.tags(new ArrayList<>(tags));
+        link.filters(new ArrayList<>(filters));
 
         return link;
     }
@@ -134,14 +125,14 @@ public class JpaLinkRepository implements LinkRepository {
     @Override
     public List<Link> getLinks(Long userId) {
         List<Link> links = entityManager
-                .createQuery("SELECT l FROM Link l JOIN l.users u WHERE u.id = :userId", Link.class)
+                .createQuery("SELECT DISTINCT l FROM Link l " + "JOIN l.users u " + "WHERE u.id = :userId", Link.class)
                 .setParameter("userId", userId)
                 .getResultList();
 
-        links.forEach(link -> {
+        for (Link link : links) {
             link.tags().size();
             link.filters().size();
-        });
+        }
 
         return links;
     }
