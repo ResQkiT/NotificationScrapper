@@ -1,4 +1,4 @@
-package backend.academy.scrapper.clients;
+package backend.academy.scrapper.clients.api;
 
 import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
-public class StackOverflowClient extends Client {
+public class StackOverflowApiClient extends ApiClient {
     private static final String SITE = "stackoverflow";
     private static final String QUESTION_FILTER = "!9Z(-wzu0T";
     private static final String ANSWER_FILTER = "withbody";
@@ -22,7 +22,7 @@ public class StackOverflowClient extends Client {
     private final String baseUrl;
 
     @Autowired
-    public StackOverflowClient(
+    public StackOverflowApiClient(
             RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
         super(restClientBuilder.build());
         this.API_KEY = scrapperConfig.stackOverflow().key();

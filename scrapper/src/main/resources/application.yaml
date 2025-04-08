@@ -4,6 +4,10 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
+
+messaging:
+  message-transport: Kafka # HTTP \ Kafka
+
 domains:
   github: "https://api.github.com"
   stackoverflow: "https://api.stackexchange.com/2.3"
@@ -12,6 +16,11 @@ domains:
 
 db:
   access-type: SQL # JPA или SQL
+
+#logging:
+#  structured:
+#    format:
+#      console : none
 
 spring:
   application:
@@ -27,6 +36,29 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        acks: all
+    topics:
+      link-update:
+        name: link-updates-topic
+        partitions: 3
+        replicas: 1
+
+    admin:
+      properties:
+        bootstrap.servers: localhost:9092
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
 
 server:
   port: 8081

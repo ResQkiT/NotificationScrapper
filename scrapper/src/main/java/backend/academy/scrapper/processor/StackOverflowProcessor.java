@@ -1,6 +1,6 @@
 package backend.academy.scrapper.processor;
 
-import backend.academy.scrapper.clients.StackOverflowClient;
+import backend.academy.scrapper.clients.api.StackOverflowApiClient;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswerDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswersListDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentDto;
@@ -19,11 +19,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class StackOverflowProcessor extends Processor {
 
-    private final StackOverflowClient stackOverflowClient;
+    private final StackOverflowApiClient stackOverflowClient;
     private final StackOverflowLinkService stackOverflowLinkService;
 
     public StackOverflowProcessor(
-            StackOverflowClient stackOverflowClient,
+            StackOverflowApiClient stackOverflowClient,
             ILinkService linkService,
             StackOverflowLinkService stackOverflowLinkService) {
         super("stackoverflow.com", linkService);

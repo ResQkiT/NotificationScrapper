@@ -1,4 +1,4 @@
-package backend.academy.scrapper.clients;
+package backend.academy.scrapper.clients.api;
 
 import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.ScrapperConfig;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
-public class GitHubClient extends Client {
+public class GitHubApiClient extends ApiClient {
     private final String token;
 
-    public GitHubClient(
+    public GitHubApiClient(
             RestClient.Builder restClientBuilder, ScrapperConfig scrapperConfig, DomainsConfig domainsConfig) {
         super(restClientBuilder.baseUrl(domainsConfig.github()).build());
         this.token = scrapperConfig.githubToken();

@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.clients.TelegramBotClient;
+import backend.academy.scrapper.clients.mesaging.http.TelegramBotClient;
 import backend.academy.scrapper.dto.LinkUpdate;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 @WireMockTest(httpPort = 8089)
-public class TelegramBotClientTest {
+public class TelegramBotApiClientTest {
 
     private TelegramBotClient telegramBotClient;
     private DomainsConfig domainsConfig;
@@ -41,7 +41,7 @@ public class TelegramBotClientTest {
                                 "{\"id\":1,\"url\":\"example.com\",\"description\":\"test\",\"tgChatIds\":[123,456]}")) // Исправлено поле
                 .willReturn(aResponse().withStatus(200)));
 
-        ResponseEntity<Void> response = telegramBotClient.sendUpdate(linkUpdate);
+        ResponseEntity<Void> response = telegramBotClient.sendMessage(linkUpdate);
 
         assertThat(response).isNotNull();
         assertThat(response.getStatusCodeValue()).isEqualTo(200);

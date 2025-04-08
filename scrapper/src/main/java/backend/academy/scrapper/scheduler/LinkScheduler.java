@@ -1,6 +1,6 @@
 package backend.academy.scrapper.scheduler;
 
-import backend.academy.scrapper.clients.TelegramBotClient;
+import backend.academy.scrapper.clients.mesaging.IClient;
 import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class LinkScheduler {
-    private final TelegramBotClient telegramBotClient;
+    private final IClient telegramBotClient;
     private final ILinkService linkService;
     private final UserService userService;
 
     private final List<Processor> processors;
 
-    @Scheduled(fixedDelay = 3000)
+    // @Scheduled(fixedDelay = 3000)
     public void execute() {
         linkService
                 .getAllLinksWithDelay(Duration.ofSeconds(5)) // TODO перенести в конфигурацию
@@ -35,7 +35,7 @@ public class LinkScheduler {
                             String text = processor.process(link);
                             if (text == null) continue;
 
-                            telegramBotClient.sendUpdate(new LinkUpdate(
+                            telegramBotClient.send(new LinkUpdate(
                                     link.id(),
                                     link.url(),
                                     text,
@@ -43,5 +43,10 @@ public class LinkScheduler {
                         }
                     }
                 });
+    }
+
+    @Scheduled(fixedDelay = 10)
+    void testKafka() {
+        telegramBotClient.send(new LinkUpdate(1L, "http:example.com", "hello", null));
     }
 }

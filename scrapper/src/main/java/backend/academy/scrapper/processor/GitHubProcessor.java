@@ -1,6 +1,6 @@
 package backend.academy.scrapper.processor;
 
-import backend.academy.scrapper.clients.GitHubClient;
+import backend.academy.scrapper.clients.api.GitHubApiClient;
 import backend.academy.scrapper.dto.git.GitHubIssueDto;
 import backend.academy.scrapper.dto.git.GitHubPullRequestDto;
 import backend.academy.scrapper.dto.git.GitHubResponseDto;
@@ -18,11 +18,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class GitHubProcessor extends Processor {
 
-    private final GitHubClient client;
+    private final GitHubApiClient client;
     private final GitHubLinkService gitHubLinkService;
 
     @Autowired
-    public GitHubProcessor(GitHubClient client, ILinkService linkService, GitHubLinkService gitHubLinkService) {
+    public GitHubProcessor(GitHubApiClient client, ILinkService linkService, GitHubLinkService gitHubLinkService) {
         super("github.com", linkService);
         this.client = client;
         this.gitHubLinkService = gitHubLinkService;
