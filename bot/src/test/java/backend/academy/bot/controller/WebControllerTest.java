@@ -31,7 +31,6 @@ class WebControllerTest {
         IncomingUpdate update = new IncomingUpdate(1L, "https://example.com", "описание", List.of(12345L));
 
         webController.update(update);
-        System.out.println("ГОЙДААА");
         ArgumentCaptor<SendMessageEvent> eventCaptor = ArgumentCaptor.forClass(SendMessageEvent.class);
 
         verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());

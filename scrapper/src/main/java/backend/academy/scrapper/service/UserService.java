@@ -6,9 +6,11 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService implements IUserService {
+@Transactional
+public class UserService {
 
     private final UserRepository userRepository;
 
@@ -17,24 +19,20 @@ public class UserService implements IUserService {
         this.userRepository = userRepository;
     }
 
-    @Override
     public boolean userExists(Long id) {
         return userRepository.userExists(id);
     }
 
-    @Override
     public List<User> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
-    @Override
     public void removeUser(Long id) {
         if (userRepository.userExists(id)) {
             userRepository.removeUserById(id);
         }
     }
 
-    @Override
     public void registerUser(Long id) {
         userRepository.addUser(new User(id, OffsetDateTime.now()));
     }

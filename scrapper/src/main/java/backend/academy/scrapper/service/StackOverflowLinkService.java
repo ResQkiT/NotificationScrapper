@@ -5,42 +5,45 @@ import backend.academy.scrapper.model.StackOverflowLink;
 import backend.academy.scrapper.repository.sql.SqlStackoverflowLinkRepository;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class StackOverflowLinkService {
-    private final SqlStackoverflowLinkRepository repository;
+    private final SqlStackoverflowLinkRepository stackoverflowLinkRepository;
+    private final LinkService linkService;
 
-    @Transactional
+    @Autowired
+    public StackOverflowLinkService(
+            SqlStackoverflowLinkRepository stackoverflowLinkRepository, LinkService linkService) {
+        this.stackoverflowLinkRepository = stackoverflowLinkRepository;
+        this.linkService = linkService;
+    }
+
     public Link createLink(StackOverflowLink link) {
-        return repository.save(link);
+        return stackoverflowLinkRepository.save(link);
     }
 
-    @Transactional
     public StackOverflowLink updateLink(StackOverflowLink link) {
-        return repository.update(link);
+        return stackoverflowLinkRepository.update(link);
     }
 
-    @Transactional(readOnly = true)
     public Optional<StackOverflowLink> findById(Long id) {
-        return repository.findByParentId(id);
+        return stackoverflowLinkRepository.findByParentId(id);
     }
 
-    @Transactional
     public void deleteLink(Long id) {
-        repository.deleteByParentId(id);
+        stackoverflowLinkRepository.deleteByParentId(id);
     }
 
-    @Transactional(readOnly = true)
     public List<StackOverflowLink> findAllLinks() {
-        return repository.findAll();
+        return stackoverflowLinkRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     public boolean existsByUrl(String url) {
-        return repository.findAll().stream().anyMatch(link -> link.url().equals(url));
+        return stackoverflowLinkRepository.findAll().stream()
+                .anyMatch(link -> link.url().equals(url));
     }
 }

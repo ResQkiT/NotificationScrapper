@@ -7,7 +7,7 @@ import backend.academy.scrapper.dto.git.GitHubResponseDto;
 import backend.academy.scrapper.model.GitHubLink;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.GitHubLinkService;
-import backend.academy.scrapper.service.ILinkService;
+import backend.academy.scrapper.service.LinkService;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public class GitHubProcessor extends Processor {
     private final GitHubLinkService gitHubLinkService;
 
     @Autowired
-    public GitHubProcessor(GitHubClient client, ILinkService linkService, GitHubLinkService gitHubLinkService) {
+    public GitHubProcessor(GitHubClient client, LinkService linkService, GitHubLinkService gitHubLinkService) {
         super("github.com", linkService);
         this.client = client;
         this.gitHubLinkService = gitHubLinkService;
@@ -46,21 +46,18 @@ public class GitHubProcessor extends Processor {
             GitHubLink newLink,
             Optional<GitHubIssueDto> lastIssue,
             Optional<GitHubPullRequestDto> lastPull) {
+
         StringBuilder response = new StringBuilder();
         boolean hasUpdates = false;
-
-        if (isFirstTimeProcessing(link)) {
-            updateOrSave(newLink);
-            touchLink(link);
-            return null;
-        }
-
         GitHubLink existingLink = gitHubLinkService.findById(link.id()).orElse(null);
-        if (existingLink == null) {
+
+        if (isFirstTimeProcessing(link) || existingLink == null) {
+            gitHubLinkService.createLink(newLink);
+            service().onUpdateLink(link);
+            service().onTouchLink(link);
             return null;
         }
 
-        // Check issues
         if (lastIssue.isPresent()) {
             GitHubIssueDto issue = lastIssue.get();
             if (!Objects.equals(existingLink.lastIssueId(), issue.id())) {
@@ -69,7 +66,6 @@ public class GitHubProcessor extends Processor {
             }
         }
 
-        // Check pull requests
         if (lastPull.isPresent()) {
             GitHubPullRequestDto pull = lastPull.get();
             if (!Objects.equals(existingLink.lastPullRequestId(), pull.id())) {
@@ -79,12 +75,13 @@ public class GitHubProcessor extends Processor {
         }
 
         if (hasUpdates) {
-            updateOrSave(newLink);
-            touchLink(link);
+            gitHubLinkService.updateLink(newLink);
+            service().onTouchLink(link);
+            service().onUpdateLink(link);
             return response.toString();
         }
+        service().onTouchLink(link);
 
-        touchLink(link);
         return null;
     }
 
@@ -110,16 +107,7 @@ public class GitHubProcessor extends Processor {
                     .pullCreatedAt(p.createdAt())
                     .pullPreviewDescription(cutBody(p.body()));
         });
-
         return gitHubLink;
-    }
-
-    private void updateOrSave(GitHubLink link) {
-        if (gitHubLinkService.findById(link.id()).isPresent()) {
-            gitHubLinkService.updateLink(link);
-        } else {
-            gitHubLinkService.createLink(link);
-        }
     }
 
     private Optional<GitHubIssueDto> getLastIssue(Link link) {

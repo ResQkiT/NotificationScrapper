@@ -36,7 +36,6 @@ public abstract class BaseRepositoryTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        System.out.println("Setting up database");
         applyLiquibaseMigrations();
     }
 
