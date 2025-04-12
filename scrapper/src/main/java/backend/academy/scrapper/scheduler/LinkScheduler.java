@@ -1,6 +1,7 @@
 package backend.academy.scrapper.scheduler;
 
 import backend.academy.scrapper.clients.mesaging.IClient;
+import backend.academy.scrapper.clients.mesaging.http.TelegramBotClient;
 import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
@@ -32,7 +33,7 @@ public class LinkScheduler {
                     String text = processor.process(link);
                     if (text == null) continue;
 
-                    telegramBotClient.sendUpdate(new LinkUpdate(
+                    telegramBotClient.send(new LinkUpdate(
                             link.id(),
                             link.url(),
                             text,
@@ -41,10 +42,5 @@ public class LinkScheduler {
                 }
             }
         });
-    }
-
-    @Scheduled(fixedDelay = 10)
-    void testKafka() {
-        telegramBotClient.send(new LinkUpdate(1L, "http:example.com", "hello", null));
     }
 }

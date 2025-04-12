@@ -14,6 +14,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.hibernate.Hibernate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,22 +105,27 @@ public class JpaLinkRepository implements LinkRepository {
             throw new EntityNotFoundException("User not found with ID: " + userId);
         }
 
+        String jpql = "SELECT l FROM Link l LEFT JOIN FETCH l.users u WHERE l.url = :url";
         Link link = entityManager
-                .createQuery("SELECT l FROM Link l WHERE l.url = :url", Link.class)
-                .setParameter("url", url)
-                .getResultStream()
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Link not found with URL: " + url));
+            .createQuery(jpql, Link.class)
+            .setParameter("url", url)
+            .getResultStream()
+            .findFirst()
+            .orElseThrow(() -> new EntityNotFoundException("Link not found with URL: " + url));
 
         boolean removedFromUser = user.links().remove(link);
 
+        link.users().remove(user);
+
         if (removedFromUser) {
+
             if (link.users().isEmpty()) {
                 removeOrphanedTagsAndFilters(link);
                 entityManager.remove(link);
             }
         }
-
+        Hibernate.initialize(link.tags());
+        Hibernate.initialize(link.filters());
         return link;
     }
 

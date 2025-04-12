@@ -22,7 +22,7 @@ public class GitHubProcessor extends Processor {
     private final GitHubLinkService gitHubLinkService;
 
     @Autowired
-    public GitHubProcessor(GitHubClient client, LinkService linkService, GitHubLinkService gitHubLinkService) {
+    public GitHubProcessor(GitHubApiClient client, LinkService linkService, GitHubLinkService gitHubLinkService) {
         super("github.com", linkService);
         this.client = client;
         this.gitHubLinkService = gitHubLinkService;

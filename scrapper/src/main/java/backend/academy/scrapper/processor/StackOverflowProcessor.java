@@ -23,7 +23,7 @@ public class StackOverflowProcessor extends Processor {
     private final StackOverflowLinkService stackOverflowLinkService;
 
     public StackOverflowProcessor(
-            StackOverflowClient stackOverflowClient,
+            StackOverflowApiClient stackOverflowClient,
             LinkService linkService,
             StackOverflowLinkService stackOverflowLinkService) {
         super("stackoverflow.com", linkService);

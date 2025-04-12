@@ -6,18 +6,13 @@ app:
 
 
 messaging:
-  message-transport: Kafka # HTTP \ Kafka
+  message-transport: HTTP # HTTP \ Kafka
 
 domains:
   github: "https://api.github.com"
   stackoverflow: "https://api.stackexchange.com/2.3"
   bot: "http://localhost:8090"
   telegram-bot-url: "http://localhost:8080"
-
-#logging:
-#  structured:
-#    format:
-#      console: ecs
 
 scheduler:
   delay: 5s
