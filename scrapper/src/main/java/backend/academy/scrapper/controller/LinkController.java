@@ -8,7 +8,7 @@ import backend.academy.scrapper.exeptions.ScrapperException;
 import backend.academy.scrapper.model.Filter;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.model.Tag;
-import backend.academy.scrapper.service.ILinkService;
+import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/links")
 public class LinkController {
 
-    private final ILinkService linkService;
+    private final LinkService linkService;
 
     private final UserService userService;
 
     @Autowired
-    public LinkController(UserService userService, ILinkService linkService) {
+    public LinkController(UserService userService, LinkService linkService) {
         this.userService = userService;
         this.linkService = linkService;
     }

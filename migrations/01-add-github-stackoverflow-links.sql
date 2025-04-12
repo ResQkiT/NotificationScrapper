@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS stackoverflow_links (
     answer_created_at TIMESTAMP WITH TIME ZONE,
     answer_preview_description VARCHAR,
 
-    comment_id BIGINT NOT NULL,
-    comment_last_username VARCHAR NOT NULL,
-    comment_created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    comment_id BIGINT,
+    comment_last_username VARCHAR,
+    comment_created_at TIMESTAMP WITH TIME ZONE,
     comment_preview_description VARCHAR
 );
 

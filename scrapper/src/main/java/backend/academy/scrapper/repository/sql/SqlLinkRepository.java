@@ -255,7 +255,8 @@ public class SqlLinkRepository implements LinkRepository {
         return link;
     }
 
-    private Optional<Link> findLinkById(Long linkId) {
+    @Override
+    public Optional<Link> findLinkById(Long linkId) {
         String sql = "SELECT id, url, last_updated_at, last_checked_at FROM links WHERE id = ?";
         try {
             Link link = jdbcTemplate.queryForObject(sql, LINK_ROW_MAPPER, linkId);

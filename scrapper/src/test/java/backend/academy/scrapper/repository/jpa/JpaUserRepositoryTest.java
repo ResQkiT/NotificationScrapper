@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @DataJpaTest
@@ -24,6 +25,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Transactional
 @Import(JpaUserRepository.class)
 @ActiveProfiles("test")
+@TestPropertySource(properties = "db.access-type=JPA")
 public class JpaUserRepositoryTest extends BaseRepositoryTest {
 
     @Autowired

@@ -15,12 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-@Import({SqlGithubLinkRepository.class, SqlLinkRepository.class})
+@Import(SqlGithubLinkRepository.class)
+@TestPropertySource(properties = "db.access-type=SQL")
 class GithubLinkRepositoryTest extends BaseRepositoryTest {
 
     @Autowired

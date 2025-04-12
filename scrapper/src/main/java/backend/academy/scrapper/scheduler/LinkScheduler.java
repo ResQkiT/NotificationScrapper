@@ -4,12 +4,12 @@ import backend.academy.scrapper.clients.mesaging.IClient;
 import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
-import backend.academy.scrapper.service.ILinkService;
-import backend.academy.scrapper.service.UserService;
+import backend.academy.scrapper.service.LinkService;
 import java.time.Duration;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,32 +17,30 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class LinkScheduler {
-    private final IClient telegramBotClient;
-    private final ILinkService linkService;
-    private final UserService userService;
-
+    private final TelegramBotClient telegramBotClient;
+    private final LinkService linkService;
     private final List<Processor> processors;
 
-    // @Scheduled(fixedDelay = 3000)
+    @Value("${scheduler.delay}")
+    private Duration schedulerDelay;
+
+    @Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
     public void execute() {
-        linkService
-                .getAllLinksWithDelay(Duration.ofSeconds(5)) // TODO перенести в конфигурацию
-                .forEach(link -> {
-                    System.out.println("Потрогали ссылку: " + link.toString());
+        linkService.getAllLinksWithDelay(schedulerDelay).forEach(link -> {
+            for (Processor processor : processors) {
+                if (processor.supports(link)) {
+                    String text = processor.process(link);
+                    if (text == null) continue;
 
-                    for (Processor processor : processors) {
-                        if (processor.supports(link)) {
-                            String text = processor.process(link);
-                            if (text == null) continue;
-
-                            telegramBotClient.send(new LinkUpdate(
-                                    link.id(),
-                                    link.url(),
-                                    text,
-                                    link.users().stream().map(User::id).toList()));
-                        }
-                    }
-                });
+                    telegramBotClient.sendUpdate(new LinkUpdate(
+                            link.id(),
+                            link.url(),
+                            text,
+                            link.users().stream().map(User::id).toList()));
+                    break;
+                }
+            }
+        });
     }
 
     @Scheduled(fixedDelay = 10)

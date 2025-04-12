@@ -9,13 +9,14 @@ import backend.academy.scrapper.repository.LinkRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
@@ -29,7 +30,7 @@ public class JpaLinkRepository implements LinkRepository {
     public Link addLink(Long userId, AddLinkRequest linkRequest) {
         User user = entityManager.find(User.class, userId);
         if (user == null) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("User not found with ID: " + userId);
         }
 
         Link link = entityManager
@@ -97,11 +98,10 @@ public class JpaLinkRepository implements LinkRepository {
     }
 
     @Override
-    @Transactional
     public Link removeLink(Long userId, String url) {
         User user = entityManager.find(User.class, userId);
         if (user == null) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("User not found with ID: " + userId);
         }
 
         Link link = entityManager
@@ -109,14 +109,15 @@ public class JpaLinkRepository implements LinkRepository {
                 .setParameter("url", url)
                 .getResultStream()
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Link not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Link not found with URL: " + url));
 
-        user.links().remove(link);
-        link.users().remove(user);
+        boolean removedFromUser = user.links().remove(link);
 
-        if (link.users().isEmpty()) {
-            removeOrphanedTagsAndFilters(link);
-            entityManager.remove(link);
+        if (removedFromUser) {
+            if (link.users().isEmpty()) {
+                removeOrphanedTagsAndFilters(link);
+                entityManager.remove(link);
+            }
         }
 
         return link;
@@ -125,21 +126,66 @@ public class JpaLinkRepository implements LinkRepository {
     @Override
     public List<Link> getLinks(Long userId) {
         List<Link> links = entityManager
-                .createQuery("SELECT DISTINCT l FROM Link l " + "JOIN l.users u " + "WHERE u.id = :userId", Link.class)
+                .createQuery("SELECT DISTINCT l FROM Link l JOIN l.users u WHERE u.id = :userId", Link.class)
                 .setParameter("userId", userId)
                 .getResultList();
 
-        for (Link link : links) {
-            link.tags().size();
-            link.filters().size();
+        if (links.isEmpty()) {
+            return links;
         }
+
+        List<Link> linksWithUsers = entityManager
+                .createQuery("SELECT DISTINCT l FROM Link l LEFT JOIN FETCH l.users u WHERE l IN :links", Link.class)
+                .setParameter("links", links)
+                .getResultList();
+
+        List<Link> linksWithTags = entityManager
+                .createQuery("SELECT DISTINCT l FROM Link l LEFT JOIN FETCH l.tags t WHERE l IN :links", Link.class)
+                .setParameter("links", links)
+                .getResultList();
+
+        List<Link> linksWithFilters = entityManager
+                .createQuery("SELECT DISTINCT l FROM Link l LEFT JOIN FETCH l.filters f WHERE l IN :links", Link.class)
+                .setParameter("links", links)
+                .getResultList();
 
         return links;
     }
 
     @Override
     public List<Link> getAllLinksWithDelay(Duration delay) {
-        return List.of();
+        OffsetDateTime threshold = OffsetDateTime.now().minus(delay);
+        String initialJpql =
+                """
+                            SELECT DISTINCT l FROM Link l
+                            WHERE l.lastCheckedAt <= :threshold OR l.lastCheckedAt IS NULL
+                            """;
+
+        List<Link> links = entityManager
+                .createQuery(initialJpql, Link.class)
+                .setParameter("threshold", threshold)
+                .getResultList();
+
+        if (links.isEmpty()) {
+            return links;
+        }
+
+        List<Link> linksWithUsers = entityManager
+                .createQuery("SELECT DISTINCT l FROM Link l LEFT JOIN FETCH l.users u WHERE l IN :links", Link.class)
+                .setParameter("links", links)
+                .getResultList();
+
+        List<Link> linksWithTags = entityManager
+                .createQuery("SELECT DISTINCT l FROM Link l LEFT JOIN FETCH l.tags t WHERE l IN :links", Link.class)
+                .setParameter("links", links)
+                .getResultList();
+
+        List<Link> linksWithFilters = entityManager
+                .createQuery("SELECT DISTINCT l FROM Link l LEFT JOIN FETCH l.filters f WHERE l IN :links", Link.class)
+                .setParameter("links", links)
+                .getResultList();
+
+        return links;
     }
 
     @Override
@@ -147,12 +193,31 @@ public class JpaLinkRepository implements LinkRepository {
         return entityManager.merge(link);
     }
 
+    @Override
+    public Optional<Link> findLinkById(Long linkId) {
+        return Optional.ofNullable(entityManager.find(Link.class, linkId));
+    }
+
     private void removeOrphanedTagsAndFilters(Link link) {
-        List<Tag> orphanedTags =
-                link.tags().stream().filter(tag -> tag.links().size() == 1).toList();
+        List<Tag> orphanedTags = link.tags().stream()
+                .filter(tag -> {
+                    Long count = entityManager
+                            .createQuery("SELECT COUNT(l) FROM Link l JOIN l.tags t WHERE t.id = :tagId", Long.class)
+                            .setParameter("tagId", tag.id())
+                            .getSingleResult();
+                    return count <= 1;
+                })
+                .toList();
 
         List<Filter> orphanedFilters = link.filters().stream()
-                .filter(filter -> filter.links().size() == 1)
+                .filter(filter -> {
+                    Long count = entityManager
+                            .createQuery(
+                                    "SELECT COUNT(l) FROM Link l JOIN l.filters f WHERE f.id = :filterId", Long.class)
+                            .setParameter("filterId", filter.id())
+                            .getSingleResult();
+                    return count <= 1;
+                })
                 .toList();
 
         orphanedTags.forEach(entityManager::remove);

@@ -2,7 +2,6 @@ package backend.academy.scrapper.repository.sql;
 
 import backend.academy.scrapper.model.GitHubLink;
 import backend.academy.scrapper.model.Link;
-import backend.academy.scrapper.repository.LinkRepository;
 import java.sql.*;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -10,20 +9,19 @@ import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional
 public class SqlGithubLinkRepository {
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<GitHubLink> rowMapper = new GithubLinkRowMapper();
-    private final LinkRepository linkRepository;
 
-    public SqlGithubLinkRepository(JdbcTemplate jdbcTemplate, LinkRepository linkRepository) {
+    public SqlGithubLinkRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.linkRepository = linkRepository;
     }
 
     public Link save(GitHubLink link) {
-        System.out.println(link);
         jdbcTemplate.update(
                 "INSERT INTO github_links (" + "link_id, issue_last_id, issue_title, issue_creator_username, "
                         + "issue_created_at, issue_preview_description, pull_last_id, "

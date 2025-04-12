@@ -20,7 +20,7 @@ public class Link {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "url", length = 2048, unique = true, nullable = false)
+    @Column(name = "url", length = 2048, unique = true)
     private String url;
 
     @Column(name = "last_updated_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
