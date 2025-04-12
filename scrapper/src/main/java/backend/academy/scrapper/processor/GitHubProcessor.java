@@ -175,7 +175,6 @@ public class GitHubProcessor extends Processor {
 
     private String getOwnerAndRepo(Link link) {
         URI uri = URI.create(link.url());
-        String ownerAndRepo = uri.getPath().substring(1);
-        return ownerAndRepo;
+        return uri.getPath().substring(1);
     }
 }

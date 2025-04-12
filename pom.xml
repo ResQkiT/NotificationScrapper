@@ -376,6 +376,10 @@
                     <version>${modernizer-maven-plugin.version}</version>
                     <configuration>
                         <javaVersion>${java.version}</javaVersion>
+                        <exclusions>
+
+                            <exclusion>java.util.Optional.get</exclusion>
+                        </exclusions>
                     </configuration>
                 </plugin>
                 <plugin>
