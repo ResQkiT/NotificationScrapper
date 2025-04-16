@@ -1,10 +1,10 @@
 package backend.academy.scrapper.processor;
 
-import backend.academy.scrapper.entity.Link;
+import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.service.LinkService;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.OffsetDateTime;
+import org.springframework.http.ResponseEntity;
 
 public abstract class Processor {
     private final String host;
@@ -32,15 +32,21 @@ public abstract class Processor {
     }
 
     protected boolean isFirstTimeProcessing(Link link) {
-        return link.lastUpdatedAt() == null;
+        return link.lastCheckedAt() == null || link.lastUpdatedAt() == null;
     }
 
-    protected boolean hasUpdates(OffsetDateTime respUpdatesTime, Link link) {
-        return respUpdatesTime.isAfter(link.lastUpdatedAt());
+    protected boolean assertSuccess(ResponseEntity<?> response, RuntimeException onExaptionCall) {
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw onExaptionCall;
+        }
+        return true;
     }
 
-    protected Link updateLink(Link link, OffsetDateTime updatedAt) {
-        link.lastUpdatedAt(updatedAt);
-        return service().updateLink(link);
+    protected String cutBody(String body) {
+        if (body == null || body.isEmpty()) {
+            return "";
+        }
+        String preview = body.length() > 200 ? body.substring(0, body.lastIndexOf(' ', 200)) + "..." : body;
+        return preview;
     }
 }

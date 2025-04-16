@@ -10,9 +10,26 @@ domains:
   bot: "http://localhost:8090"
   telegram-bot-url: "http://localhost:8080"
 
+#logging:
+#  structured:
+#    format:
+#      console: ecs
+
+scheduler:
+  delay: 5s
+  fixed-delay: 5s
+
+db:
+  access-type: JPA # JPA или SQL
+
 spring:
   application:
     name: Scrapper
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrapper_db
+    username: admin
+    password: secret
+    driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: false
   jpa:

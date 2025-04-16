@@ -4,8 +4,10 @@ import backend.academy.scrapper.dto.AddLinkRequest;
 import backend.academy.scrapper.dto.LinkResponse;
 import backend.academy.scrapper.dto.ListLinksResponse;
 import backend.academy.scrapper.dto.RemoveLinkRequest;
-import backend.academy.scrapper.entity.Link;
 import backend.academy.scrapper.exeptions.ScrapperException;
+import backend.academy.scrapper.model.Filter;
+import backend.academy.scrapper.model.Link;
+import backend.academy.scrapper.model.Tag;
 import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.UserService;
 import java.util.ArrayList;
@@ -47,7 +49,9 @@ public class LinkController {
         List<LinkResponse> linkResponseList = new ArrayList<>();
 
         for (Link link : userLinks) {
-            linkResponseList.add(new LinkResponse(link.id(), link.url(), link.tags(), link.filters()));
+            List<String> tags = link.tags().stream().map(Tag::name).toList();
+            List<String> filters = link.filters().stream().map(Filter::name).toList();
+            linkResponseList.add(new LinkResponse(link.id(), link.url(), tags, filters));
         }
 
         ListLinksResponse response = new ListLinksResponse(linkResponseList, userLinks.size());
@@ -74,13 +78,16 @@ public class LinkController {
             throw new ScrapperException("Пользователь с данным ID не найден", HttpStatus.NOT_FOUND);
         }
 
-        if (linkService.hasLink(chatId, request)) {
+        if (linkService.hasLink(chatId, request.link())) {
             throw new ScrapperException("Такая ссылка уже существует", HttpStatus.NOT_ACCEPTABLE);
         }
 
         Link link = linkService.addLink(chatId, request);
 
-        LinkResponse response = new LinkResponse(link.id(), link.url(), link.tags(), link.filters());
+        List<String> tags = link.tags().stream().map(Tag::name).toList();
+        List<String> filters = link.filters().stream().map(Filter::name).toList();
+
+        LinkResponse response = new LinkResponse(link.id(), link.url(), tags, filters);
 
         log.info("Ссылка успешно добавлена: {}", response);
         return ResponseEntity.ok(response);
@@ -109,8 +116,10 @@ public class LinkController {
             throw new ScrapperException("Сcылка не найдена", HttpStatus.NOT_FOUND);
         }
 
-        LinkResponse response =
-                new LinkResponse(removedLink.id(), removedLink.url(), removedLink.tags(), removedLink.filters());
+        List<String> tags = removedLink.tags().stream().map(Tag::name).toList();
+        List<String> filters = removedLink.filters().stream().map(Filter::name).toList();
+
+        LinkResponse response = new LinkResponse(removedLink.id(), removedLink.url(), tags, filters);
 
         log.info("Ссылка успешно удалена: {}", response);
         return ResponseEntity.ok(response);

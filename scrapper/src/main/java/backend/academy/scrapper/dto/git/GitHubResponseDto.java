@@ -1,4 +1,4 @@
-package backend.academy.scrapper.dto;
+package backend.academy.scrapper.dto.git;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;

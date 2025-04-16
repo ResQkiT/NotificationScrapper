@@ -28,19 +28,16 @@ class WebControllerTest {
     @Test
     @DisplayName("Обновление: при одном chatId отправляется одно событие с корректными данными")
     void testUpdate_whenSingleChatId_thenOk() {
-        IncomingUpdate update = new IncomingUpdate(
-                1L, "https://example.com", "Описание изменения", List.of(12345L) // Один chatId
-                );
+        IncomingUpdate update = new IncomingUpdate(1L, "https://example.com", "описание", List.of(12345L));
 
         webController.update(update);
-
         ArgumentCaptor<SendMessageEvent> eventCaptor = ArgumentCaptor.forClass(SendMessageEvent.class);
 
         verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
 
         SendMessageEvent capturedEvent = eventCaptor.getValue();
         assertEquals(12345L, capturedEvent.id());
-        assertEquals("Изменение на странице: https://example.com\n Описание: Описание изменения", capturedEvent.text());
+        assertEquals("Изменение на странице: https://example.com\n Описание: \nописание", capturedEvent.text());
     }
 
     @Test
@@ -59,12 +56,12 @@ class WebControllerTest {
 
         assertEquals(12345L, capturedEvents.get(0).id());
         assertEquals(
-                "Изменение на странице: https://example.com\n Описание: Описание изменения",
+                "Изменение на странице: https://example.com\n Описание: \nОписание изменения",
                 capturedEvents.get(0).text());
 
         assertEquals(67890L, capturedEvents.get(1).id());
         assertEquals(
-                "Изменение на странице: https://example.com\n Описание: Описание изменения",
+                "Изменение на странице: https://example.com\n Описание: \nОписание изменения",
                 capturedEvents.get(1).text());
     }
 }

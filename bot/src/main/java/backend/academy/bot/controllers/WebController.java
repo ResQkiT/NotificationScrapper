@@ -31,7 +31,7 @@ public class WebController {
             message.append("Изменение на странице: ")
                     .append(update.url())
                     .append("\n")
-                    .append(" Описание: ")
+                    .append(" Описание: \n")
                     .append(update.description());
 
             eventPublisher.publishEvent(new SendMessageEvent(chatId, message.toString()));
