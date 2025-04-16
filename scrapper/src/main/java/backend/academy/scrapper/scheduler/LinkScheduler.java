@@ -21,13 +21,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 public class LinkScheduler {
+
     private final IClient telegramBotClient;
+
     private final LinkService linkService;
     private final List<Processor> processors;
 
     @Value("${scheduler.delay}")
     private Duration schedulerDelay;
-
+  
 @Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
 public void execute() {
  linkService.getAllLinksWithDelay(schedulerDelay).forEach(link -> {
@@ -46,5 +48,4 @@ public void execute() {
      }
  });
 }
-
 }

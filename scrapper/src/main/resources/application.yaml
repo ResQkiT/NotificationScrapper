@@ -14,12 +14,19 @@ domains:
   bot: "http://localhost:8090"
   telegram-bot-url: "http://localhost:8080"
 
+=======
+#logging:
+#  structured:
+#    format:
+#      console: ecs
+
+
 scheduler:
   delay: 5s
   fixed-delay: 5s
 
 db:
-  access-type: SQL # JPA или SQL
+  access-type: JPA # JPA или SQL
 
 #logging:
 #  structured:
