@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ConditionalOnProperty(name = "messaging.message-transport", havingValue = "Kafka")
-public class KafkaBotClient implements IClient {
+public class KafkaBotProducer implements IClient {
 
     private final KafkaTemplate<String, LinkUpdate> kafkaTemplate;
     private final String topicName;
 
-    public KafkaBotClient(
+    public KafkaBotProducer(
             KafkaTemplate<String, LinkUpdate> kafkaTemplate,
             @Value("${spring.kafka.topics.link-update.name}") String topicName) {
         this.kafkaTemplate = kafkaTemplate;

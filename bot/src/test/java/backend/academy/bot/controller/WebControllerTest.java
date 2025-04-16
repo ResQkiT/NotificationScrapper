@@ -3,7 +3,7 @@ package backend.academy.bot.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-import backend.academy.bot.controllers.WebController;
+import backend.academy.bot.messaging.http.WebController;
 import backend.academy.bot.dto.IncomingUpdate;
 import backend.academy.bot.events.SendMessageEvent;
 import java.util.List;

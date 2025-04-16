@@ -11,8 +11,32 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: scrapper-link-update-consumers
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.use.type.headers: false
+
+        spring.json.value.default.type: backend.academy.bot.dto.IncomingUpdate
+
+        spring.json.trusted.packages: java.util,java.lang,backend.academy.bot.dto
+
+        spring.json.ignore.unknown.tokens: true
+
+    topics:
+      link-update:
+        name: "link-updates-topic"
+
 domains:
   scrapper: "http://localhost:8081"
+
+messaging:
+  message-transport: Kafka # HTTP \ Kafka
 
 server:
   port: 8080
