@@ -11,6 +11,12 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  caching: true
+
+  redis:
+    host: localhost
+    port: 6379
+
   kafka:
     bootstrap-servers: localhost:29092
     consumer:
@@ -21,16 +27,22 @@ spring:
 
       properties:
         spring.json.use.type.headers: false
-
         spring.json.value.default.type: backend.academy.bot.dto.IncomingUpdate
-
         spring.json.trusted.packages: java.util,java.lang,backend.academy.bot.dto
-
         spring.json.ignore.unknown.tokens: true
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
     topics:
       link-update:
         name: "link-updates-topic"
+      link-update-dlq:
+        name: link-updates.DLQ
+
+    listener:
+      errorHandler: method
 
 domains:
   scrapper: "http://localhost:8081"

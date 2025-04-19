@@ -3,9 +3,9 @@ package backend.academy.bot.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-import backend.academy.bot.messaging.http.WebController;
 import backend.academy.bot.dto.IncomingUpdate;
 import backend.academy.bot.events.SendMessageEvent;
+import backend.academy.bot.messaging.http.WebController;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -107,11 +107,11 @@ public class JpaLinkRepository implements LinkRepository {
 
         String jpql = "SELECT l FROM Link l LEFT JOIN FETCH l.users u WHERE l.url = :url";
         Link link = entityManager
-            .createQuery(jpql, Link.class)
-            .setParameter("url", url)
-            .getResultStream()
-            .findFirst()
-            .orElseThrow(() -> new EntityNotFoundException("Link not found with URL: " + url));
+                .createQuery(jpql, Link.class)
+                .setParameter("url", url)
+                .getResultStream()
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Link not found with URL: " + url));
 
         boolean removedFromUser = user.links().remove(link);
 

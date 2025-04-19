@@ -14,7 +14,6 @@ domains:
   bot: "http://localhost:8090"
   telegram-bot-url: "http://localhost:8080"
 
-=======
 #logging:
 #  structured:
 #    format:

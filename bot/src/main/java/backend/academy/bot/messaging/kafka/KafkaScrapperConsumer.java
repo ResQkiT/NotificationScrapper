@@ -21,12 +21,14 @@ public class KafkaScrapperConsumer extends ScrapperController {
     }
 
     @KafkaListener(
-        topics = "#{'${spring.kafka.topics.link-update.name}'}",
-        groupId = "${spring.kafka.consumer.group-id}"
-    )
+            topics = "#{'${spring.kafka.topics.link-update.name}'}",
+            groupId = "${spring.kafka.consumer.group-id}",
+            errorHandler = "kafkaErrorHandler")
     public void listen(@Payload IncomingUpdate update) {
         log.info("Received new kafka link update");
+        if (update == null || update.url() == null || update.url().isEmpty() || update.tgChatIds() == null) {
+            throw new IllegalArgumentException("URL cannot be null or empty");
+        }
         sendNotification(update);
     }
-
 }

@@ -1,6 +1,6 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.clients.ScrapperClient;
+import backend.academy.bot.clients.IClient;
 import backend.academy.bot.dto.RemoveLinkRequest;
 import backend.academy.bot.entity.Session;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UntrackLinkCommand extends Command {
 
-    private final ScrapperClient scrapperClient;
+    private final IClient scrapperClient;
 
     @Autowired
-    public UntrackLinkCommand(ScrapperClient scrapperClient) {
+    public UntrackLinkCommand(IClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 

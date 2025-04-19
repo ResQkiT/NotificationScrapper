@@ -1,6 +1,6 @@
 package backend.academy.bot.clients;
 
-import backend.academy.bot.DomainsConfig;
+import backend.academy.bot.config.DomainsConfig;
 import backend.academy.bot.dto.AddLinkRequest;
 import backend.academy.bot.dto.LinkResponse;
 import backend.academy.bot.dto.ListLinksResponse;
@@ -17,8 +17,7 @@ import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Component
-public class ScrapperClient {
-
+public class ScrapperClient implements IClient {
     private final RestClient restClient;
     private final String SCHEDULER_SERVICE_URL;
     private static final String TG_ID_HEADER = "Tg-Chat-Id";

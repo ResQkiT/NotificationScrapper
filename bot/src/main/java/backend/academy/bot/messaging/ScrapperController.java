@@ -20,10 +20,10 @@ public abstract class ScrapperController {
     protected String generateReport(IncomingUpdate update) {
         StringBuilder message = new StringBuilder();
         message.append("Изменение на странице: ")
-            .append(update.url())
-            .append("\n")
-            .append(" Описание: \n")
-            .append(update.description());
+                .append(update.url())
+                .append("\n")
+                .append(" Описание: \n")
+                .append(update.description());
         return message.toString();
     }
 
@@ -33,5 +33,4 @@ public abstract class ScrapperController {
             eventPublisher.publishEvent(new SendMessageEvent(chatId, report));
         }
     }
-
 }

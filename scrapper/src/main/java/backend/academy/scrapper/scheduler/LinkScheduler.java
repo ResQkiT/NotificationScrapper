@@ -1,16 +1,12 @@
 package backend.academy.scrapper.scheduler;
 
 import backend.academy.scrapper.clients.mesaging.IClient;
-import backend.academy.scrapper.clients.mesaging.http.TelegramBotClient;
 import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
 import backend.academy.scrapper.service.LinkService;
-import java.lang.reflect.Array;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,23 +25,31 @@ public class LinkScheduler {
 
     @Value("${scheduler.delay}")
     private Duration schedulerDelay;
-  
-@Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
-public void execute() {
- linkService.getAllLinksWithDelay(schedulerDelay).forEach(link -> {
-     for (Processor processor : processors) {
-         if (processor.supports(link)) {
-             String text = processor.process(link);
-             if (text == null) continue;
 
-             telegramBotClient.send(new LinkUpdate(
-                     link.id(),
-                     link.url(),
-                     text,
-                     link.users().stream().map(User::id).toList()));
-             break;
-         }
-     }
- });
-}
+    @Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
+    public void execute() {
+        linkService.getAllLinksWithDelay(schedulerDelay).forEach(link -> {
+            for (Processor processor : processors) {
+                if (processor.supports(link)) {
+                    String text = processor.process(link);
+                    if (text == null) continue;
+
+                    telegramBotClient.send(new LinkUpdate(
+                            link.id(),
+                            link.url(),
+                            text,
+                            link.users().stream().map(User::id).toList()));
+                    break;
+                }
+            }
+        });
+    }
+
+    //    @Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
+    //    public void schedule() {
+    //        List<Long> list = new ArrayList();
+    //        list.add();
+    //
+    //        telegramBotClient.send(new LinkUpdate(1L, "http", "description", list));
+    //    }
 }

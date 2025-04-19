@@ -1,7 +1,6 @@
 package backend.academy.bot.messaging.http;
 
 import backend.academy.bot.dto.IncomingUpdate;
-import backend.academy.bot.events.SendMessageEvent;
 import backend.academy.bot.messaging.ScrapperController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
