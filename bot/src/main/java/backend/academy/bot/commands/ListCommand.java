@@ -1,6 +1,5 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.clients.CachedScrapperClient;
 import backend.academy.bot.clients.IClient;
 import backend.academy.bot.dto.LinkResponse;
 import backend.academy.bot.dto.ListLinksResponse;
@@ -18,7 +17,7 @@ public class ListCommand extends Command {
     private final IClient scrapperClient;
 
     @Autowired
-    public ListCommand(CachedScrapperClient scrapperClient) {
+    public ListCommand(IClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 

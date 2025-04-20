@@ -8,6 +8,7 @@ import backend.academy.bot.dto.RemoveLinkRequest;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,7 +29,7 @@ public class CachedScrapperClient extends ScrapperClient implements IClient {
     public CachedScrapperClient(
             RestClient.Builder restClientBuilder,
             DomainsConfig domainsConfig,
-            RedisTemplate<Long, LinkResponse> redisTemplate) {
+            @Qualifier("linkResponseRedisTemplate") RedisTemplate<Long, LinkResponse> redisTemplate) {
         super(restClientBuilder, domainsConfig);
         this.redisTemplate = redisTemplate;
     }
