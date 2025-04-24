@@ -19,9 +19,9 @@ import org.springframework.web.client.RestClient;
 
 @Component
 @Slf4j
-@ConditionalOnProperty(name = "spring.caching", havingValue = "true")
 @Primary
-public class CachedScrapperClient extends ScrapperClient implements IClient {
+@ConditionalOnProperty(name = "spring.caching", havingValue = "true")
+public class CachedScrapperClient extends ScrapperClientBase implements IClient {
 
     private final RedisTemplate<Long, LinkResponse> redisTemplate;
 
