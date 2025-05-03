@@ -10,11 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
+@Component
 @Slf4j
-public abstract class ScrapperClientBase {
+public class ScrapperClientBase {
     private final RestClient restClient;
     private final String SCHEDULER_SERVICE_URL;
     private static final String TG_ID_HEADER = "Tg-Chat-Id";
@@ -25,83 +27,46 @@ public abstract class ScrapperClientBase {
     }
 
     public ResponseEntity<Void> registerChat(Long id) {
-        try {
-            log.info("Registering chat with id: {}", id);
-            ResponseEntity<Void> response =
-                    restClient.post().uri("/tg-chat/{id}", id).retrieve().toBodilessEntity();
-            log.info("Register chat response: {}", response);
-            return response;
-        } catch (HttpClientErrorException e) {
-            log.error("Error registering chat: Status={} Body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            return ResponseEntity.status(e.getStatusCode()).build();
-        }
+        log.info("Registering chat with id: {}", id);
+        log.info("Class type: {}", this.getClass().getName());
+        return restClient.post().uri("/tg-chat/{id}", id).retrieve().toBodilessEntity();
     }
 
     public ResponseEntity<Void> deleteChat(Long id) {
-        try {
-            log.info("Deleting chat with id: {}", id);
-            ResponseEntity<Void> response =
-                    restClient.delete().uri("/tg-chat/{id}", id).retrieve().toBodilessEntity();
-            log.info("Delete chat response: {}", response);
-            return response;
-        } catch (HttpClientErrorException e) {
-            log.error("Error deleting chat: Status={} Body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            return ResponseEntity.status(e.getStatusCode()).build();
-        }
+        log.info("Deleting chat with id: {}", id);
+        return restClient.delete().uri("/tg-chat/{id}", id).retrieve().toBodilessEntity();
     }
 
     public ResponseEntity<ListLinksResponse> getTrackedLinks(Long chatId) {
-        try {
-            log.info("Fetching tracked links for chatId: {}", chatId);
-            return restClient
-                    .get()
-                    .uri("/links")
-                    .header(TG_ID_HEADER, chatId.toString())
-                    .retrieve()
-                    .toEntity(ListLinksResponse.class);
-        } catch (HttpClientErrorException e) {
-            log.error(
-                    "Error fetching tracked links: Status={} Body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            return ResponseEntity.status(e.getStatusCode()).body(new ListLinksResponse(List.of(), 0));
-        } catch (Exception e) {
-            log.error("Unexpected error while fetching tracked links", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ListLinksResponse(List.of(), 0));
-        }
+        log.info("Fetching tracked links for chatId: {}", chatId);
+        return restClient
+                .get()
+                .uri("/links")
+                .header(TG_ID_HEADER, chatId.toString())
+                .retrieve()
+                .toEntity(ListLinksResponse.class);
+
     }
 
     public ResponseEntity<LinkResponse> addLink(Long chatId, AddLinkRequest request) {
-        try {
-            log.info("Adding link for chatId: {} with request: {}", chatId, request);
-            ResponseEntity<LinkResponse> response = restClient
-                    .post()
-                    .uri("/links")
-                    .header(TG_ID_HEADER, chatId.toString())
-                    .body(request)
-                    .retrieve()
-                    .toEntity(LinkResponse.class);
-            log.info("Add link response: {}", response);
-            return response;
-        } catch (HttpClientErrorException e) {
-            log.error("Error adding link: Status={} Body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            return ResponseEntity.status(e.getStatusCode()).build();
-        }
+        log.info("Adding link for chatId: {} with request: {}", chatId, request);
+        return restClient
+                .post()
+                .uri("/links")
+                .header(TG_ID_HEADER, chatId.toString())
+                .body(request)
+                .retrieve()
+                .toEntity(LinkResponse.class);
     }
 
     public ResponseEntity<LinkResponse> removeLink(Long chatId, RemoveLinkRequest request) {
-        try {
-            log.info("Removing link for chatId: {} with request: {}", chatId, request);
-            ResponseEntity<LinkResponse> response = restClient
-                    .method(HttpMethod.DELETE)
-                    .uri("/links")
-                    .header("Tg-Chat-Id", chatId.toString())
-                    .body(request)
-                    .retrieve()
-                    .toEntity(LinkResponse.class);
-            log.info("Remove link response: {}", response);
-            return response;
-        } catch (HttpClientErrorException e) {
-            log.error("Error removing link: Status={} Body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            return ResponseEntity.status(e.getStatusCode()).build();
-        }
+        log.info("Removing link for chatId: {} with request: {}", chatId, request);
+        return restClient
+                .method(HttpMethod.DELETE)
+                .uri("/links")
+                .header("Tg-Chat-Id", chatId.toString())
+                .body(request)
+                .retrieve()
+                .toEntity(LinkResponse.class);
     }
 }

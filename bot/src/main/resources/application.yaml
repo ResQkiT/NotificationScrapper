@@ -50,6 +50,31 @@ domains:
 messaging:
   message-transport: Kafka # HTTP \ Kafka
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      scrapperCircuitBreaker:
+        slidingWindowSize: 10
+        minimumRequiredCalls: 5
+        failureRateThreshold: 50
+        permittedCallsInHalfOpenState: 1
+        waitDurationInOpenState: "1s"
+        slidingWindowType: COUNT_BASED
+
+  retry:
+    instances:
+      scrapperRetry:
+        maxRetryAttempts: 3
+        waitDuration: 100ms
+
+  ratelimiter:
+    instances:
+      scrapperRateLimiter:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0ms
+
+
 server:
   port: 8080
 
