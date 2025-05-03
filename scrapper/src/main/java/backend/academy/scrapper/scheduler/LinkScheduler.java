@@ -6,6 +6,7 @@ import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
 import backend.academy.scrapper.service.LinkService;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,11 +46,10 @@ public class LinkScheduler {
         });
     }
 
-    //    @Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
-    //    public void schedule() {
-    //        List<Long> list = new ArrayList();
-    //        list.add();
-    //
-    //        telegramBotClient.send(new LinkUpdate(1L, "http", "description", list));
-    //    }
+    @Scheduled(fixedDelayString = "10s")
+    public void schedule() {
+        List<Long> list = new ArrayList();
+
+        telegramBotClient.send(new LinkUpdate(1L, "http", "description", list));
+    }
 }

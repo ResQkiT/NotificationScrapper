@@ -6,7 +6,7 @@ app:
 
 
 messaging:
-  message-transport: Kafka # HTTP \ Kafka
+  message-transport: HTTP # HTTP \ Kafka
 
 domains:
   github: "https://api.github.com"
@@ -14,11 +14,29 @@ domains:
   bot: "http://localhost:8090"
   telegram-bot-url: "http://localhost:8080"
 
-#logging:
-#  structured:
-#    format:
-#      console: ecs
+resilience4j:
+  circuitbreaker:
+    instances:
+      telegramCircuitBreaker:
+        slidingWindowSize: 1
+        minimumRequiredCalls: 1
+        failureRateThreshold: 100
+        permittedCallsInHalfOpenState: 1
+        waitDurationInOpenState: "1s"
+        slidingWindowType: COUNT_BASED
 
+  retry:
+    instances:
+      telegramRetry:
+        maxRetryAttempts: 3
+        waitDuration: 100ms
+
+  ratelimiter:
+    instances:
+      telegramRateLimiter:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0ms
 
 scheduler:
   delay: 5s
