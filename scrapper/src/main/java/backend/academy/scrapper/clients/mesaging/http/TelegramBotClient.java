@@ -2,36 +2,31 @@ package backend.academy.scrapper.clients.mesaging.http;
 
 import backend.academy.scrapper.clients.mesaging.IClient;
 import backend.academy.scrapper.dto.LinkUpdate;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpStatus;
-
+import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-
 @Slf4j
 @Component
-@ConditionalOnProperty(name = "messaging.message-transport", havingValue = "Http")
+@Order(1)
 public class TelegramBotClient implements IClient {
-    private final MessageSender messageSender;
+    private final HttpMessageSender httpMessageSender;
 
     @Autowired
-    public TelegramBotClient(MessageSender messageSender) {
-        this.messageSender = messageSender;
+    public TelegramBotClient(HttpMessageSender httpMessageSender) {
+        this.httpMessageSender = httpMessageSender;
     }
 
     @Override
-    public void send(LinkUpdate update) {
-        ResponseEntity<Void> response = messageSender.sendMessage(update);
-        if (response.getStatusCode() == HttpStatus.SERVICE_UNAVAILABLE) {
-            log.info("Service is unavailable, message not sent.");
-        } else if (!response.getStatusCode().is2xxSuccessful()) {
-            log.info("Failed to send message: " + response.getStatusCode());
-        } else {
-            log.info("Message sent successfully.");
+    public boolean send(LinkUpdate update) {
+        try {
+            ResponseEntity<Void> response = httpMessageSender.sendMessage(update);
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (Exception e) {
+            log.error("Error sending message with HTTP", e);
+            return false;
         }
     }
 }

@@ -1,6 +1,6 @@
 package backend.academy.scrapper.scheduler;
 
-import backend.academy.scrapper.clients.mesaging.IClient;
+import backend.academy.scrapper.clients.mesaging.MessagingProcessor;
 import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
@@ -19,8 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LinkScheduler {
 
-    private final IClient telegramBotClient;
-
+    private final MessagingProcessor messagingProcessor;
     private final LinkService linkService;
     private final List<Processor> processors;
 
@@ -35,7 +34,7 @@ public class LinkScheduler {
                     String text = processor.process(link);
                     if (text == null) continue;
 
-                    telegramBotClient.send(new LinkUpdate(
+                    messagingProcessor.send(new LinkUpdate(
                             link.id(),
                             link.url(),
                             text,
@@ -50,6 +49,6 @@ public class LinkScheduler {
     public void schedule() {
         List<Long> list = new ArrayList();
 
-        telegramBotClient.send(new LinkUpdate(1L, "http", "description", list));
+        messagingProcessor.send(new LinkUpdate(1L, "http", "description", list));
     }
 }

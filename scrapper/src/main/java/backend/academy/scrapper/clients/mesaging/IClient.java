@@ -4,5 +4,5 @@ import backend.academy.scrapper.dto.LinkUpdate;
 
 public interface IClient {
 
-    void send(LinkUpdate message);
+    boolean send(LinkUpdate message);
 }

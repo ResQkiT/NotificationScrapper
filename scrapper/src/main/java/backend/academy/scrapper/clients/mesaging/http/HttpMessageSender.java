@@ -5,7 +5,6 @@ import backend.academy.scrapper.dto.LinkUpdate;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,13 +15,13 @@ import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Component
-public class MessageSender {
+public class HttpMessageSender {
     private final RestClient restClient;
 
     @Autowired
-    public MessageSender(RestClient.Builder restClientBuilder, DomainsConfig domainsConfig) {
+    public HttpMessageSender(RestClient.Builder restClientBuilder, DomainsConfig domainsConfig) {
         this.restClient =
-            restClientBuilder.baseUrl(domainsConfig.telegramBotUrl()).build();
+                restClientBuilder.baseUrl(domainsConfig.telegramBotUrl()).build();
     }
 
     @RateLimiter(name = "telegramRateLimiter")
@@ -31,12 +30,12 @@ public class MessageSender {
     public ResponseEntity<Void> sendMessage(LinkUpdate linkUpdate) {
         log.info("Sending link update {}", linkUpdate);
         return restClient
-            .post()
-            .uri("/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(linkUpdate)
-            .retrieve()
-            .toBodilessEntity();
+                .post()
+                .uri("/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(linkUpdate)
+                .retrieve()
+                .toBodilessEntity();
     }
 
     public ResponseEntity<Void> fallbackSendMessage(LinkUpdate linkUpdate, Throwable t) {

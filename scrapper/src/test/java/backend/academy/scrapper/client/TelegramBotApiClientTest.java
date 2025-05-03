@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.clients.mesaging.http.TelegramBotClient;
+import backend.academy.scrapper.clients.mesaging.http.HttpMessageSender;
 import backend.academy.scrapper.dto.LinkUpdate;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.springframework.web.client.RestClient;
 @WireMockTest(httpPort = 8089)
 public class TelegramBotApiClientTest {
 
-    private TelegramBotClient telegramBotClient;
+    private HttpMessageSender telegramBotClient;
     private DomainsConfig domainsConfig;
 
     @BeforeEach
@@ -27,7 +27,7 @@ public class TelegramBotApiClientTest {
         domainsConfig = mock(DomainsConfig.class);
         when(domainsConfig.telegramBotUrl()).thenReturn("http://localhost:8089");
         RestClient.Builder builder = RestClient.builder();
-        telegramBotClient = new TelegramBotClient(builder, domainsConfig);
+        telegramBotClient = new HttpMessageSender(builder, domainsConfig);
     }
 
     @Test
@@ -36,9 +36,8 @@ public class TelegramBotApiClientTest {
         LinkUpdate linkUpdate = new LinkUpdate(1L, "example.com", "test", List.of(123L, 456L));
         stubFor(post(urlEqualTo("/update"))
                 .withHeader("Content-Type", equalTo("application/json"))
-                .withRequestBody(
-                        equalToJson(
-                                "{\"id\":1,\"url\":\"example.com\",\"description\":\"test\",\"tgChatIds\":[123,456]}")) // Исправлено поле
+                .withRequestBody(equalToJson(
+                        "{\"id\":1,\"url\":\"example.com\",\"description\":\"test\",\"tgChatIds\":[123,456]}"))
                 .willReturn(aResponse().withStatus(200)));
 
         ResponseEntity<Void> response = telegramBotClient.sendMessage(linkUpdate);
