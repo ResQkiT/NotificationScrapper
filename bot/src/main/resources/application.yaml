@@ -77,9 +77,9 @@ resilience4j:
   ratelimiter:
     instances:
       scrapperRateLimiter:
-        limitForPeriod: 10
+        limitForPeriod: 5
         limitRefreshPeriod: 1s
-        timeoutDuration: 0ms
+        timeoutDuration: 100ms
 
   timelimiter:
     instances:

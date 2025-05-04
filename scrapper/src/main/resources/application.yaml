@@ -8,7 +8,7 @@ app:
 
 messaging:
   message-transport: HTTP # HTTP \ Kafka
-  requestPerSecond: 5
+  requestPerSecond: 10
 
 domains:
   github: "https://api.github.com"

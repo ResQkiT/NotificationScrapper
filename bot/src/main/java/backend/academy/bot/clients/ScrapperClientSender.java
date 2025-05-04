@@ -6,7 +6,6 @@ import backend.academy.bot.dto.LinkResponse;
 import backend.academy.bot.dto.ListLinksResponse;
 import backend.academy.bot.dto.RemoveLinkRequest;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,6 @@ public class ScrapperClientSender implements IClient {
     @Override
     @Retry(name = "scrapperRetry", fallbackMethod = "fallbackRegisterChat")
     @CircuitBreaker(name = "scrapperCircuitBreaker")
-    @RateLimiter(name = "scrapperRateLimiter")
     public ResponseEntity<Void> registerChat(Long id) {
         log.info("Registering chat with id: {}", id);
         return restClient.post().uri("/tg-chat/{id}", id).retrieve().toBodilessEntity();
@@ -45,7 +43,6 @@ public class ScrapperClientSender implements IClient {
     @Override
     @Retry(name = "scrapperRetry", fallbackMethod = "fallbackDeleteChat")
     @CircuitBreaker(name = "scrapperCircuitBreaker")
-    @RateLimiter(name = "scrapperRateLimiter")
     public ResponseEntity<Void> deleteChat(Long id) {
         log.info("Deleting chat with id: {}", id);
         return restClient.delete().uri("/tg-chat/{id}", id).retrieve().toBodilessEntity();
@@ -56,10 +53,8 @@ public class ScrapperClientSender implements IClient {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
 
-    @Override
     @Retry(name = "scrapperRetry", fallbackMethod = "fallbackGetTrackedLinks")
     @CircuitBreaker(name = "scrapperCircuitBreaker")
-    @RateLimiter(name = "scrapperRateLimiter")
     public ResponseEntity<ListLinksResponse> getTrackedLinks(Long chatId) {
         log.info("Fetching tracked links for chatId: {}", chatId);
         return restClient
@@ -78,7 +73,6 @@ public class ScrapperClientSender implements IClient {
     @Override
     @Retry(name = "scrapperRetry", fallbackMethod = "fallbackAddLink")
     @CircuitBreaker(name = "scrapperCircuitBreaker")
-    @RateLimiter(name = "scrapperRateLimiter")
     public ResponseEntity<LinkResponse> addLink(Long chatId, AddLinkRequest request) {
         log.info("Adding link for chatId: {} with request: {}", chatId, request);
         return restClient
@@ -99,7 +93,6 @@ public class ScrapperClientSender implements IClient {
     @Override
     @Retry(name = "scrapperRetry", fallbackMethod = "fallbackRemoveLink")
     @CircuitBreaker(name = "scrapperCircuitBreaker")
-    @RateLimiter(name = "scrapperRateLimiter")
     public ResponseEntity<LinkResponse> removeLink(Long chatId, RemoveLinkRequest request) {
         log.info("Removing link for chatId: {} with request: {}", chatId, request);
         return restClient

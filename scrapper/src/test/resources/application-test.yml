@@ -1,10 +1,9 @@
 spring:
-  caching=true
-
-logging:
-    level:
-        org.springframework.test.web.client: DEBUG
-        org.springframework.web.client: TRACE
+  jpa:
+  hibernate:
+    ddl-auto: none
+messaging:
+  requestPerSecond: 10
 
 resilience4j:
   circuitbreaker:
@@ -34,7 +33,7 @@ resilience4j:
   ratelimiter:
     instances:
       scrapperRateLimiter:
-        limitForPeriod: 5
+        limitForPeriod: 10
         limitRefreshPeriod: 1s
         timeoutDuration: 100ms
 
