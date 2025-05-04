@@ -51,12 +51,11 @@ domains:
 
 resilience4j:
   circuitbreaker:
-    circuitBreakerAspectOrder: 1 #//не уверен в каком порядке применять их
     instances:
       scrapperCircuitBreaker:
         registerHealthIndicator: true
         slidingWindowSize: 10
-        minimumNumberOfCalls: 5
+        minimumNumberOfCalls: 10
         failureRateThreshold: 50
 
         waitDurationInOpenState: "3s"
@@ -64,11 +63,15 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 2
 
   retry:
-    retryAspectOrder: 2
     instances:
       scrapperRetry:
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.lang.RuntimeException
+          - java.util.concurrent.TimeoutException
         max-attempts: 3
-        waitDuration: 100ms
+        waitDuration: 500ms
 
 
   ratelimiter:
@@ -83,6 +86,7 @@ resilience4j:
       scrapperTimeLimiter:
         timeout-duration: 500ms
         cancel-running-future: true
+
 server:
   port: 8080
 

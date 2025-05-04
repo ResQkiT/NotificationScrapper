@@ -1,0 +1,45 @@
+spring:
+  caching=true
+
+logging:
+    level:
+        org.springframework.test.web.client: DEBUG
+        org.springframework.web.client: TRACE
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      scrapperCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50
+
+        waitDurationInOpenState: "3s"
+        slidingWindowType: COUNT_BASED
+        permittedNumberOfCallsInHalfOpenState: 2
+
+  retry:
+    instances:
+      scrapperRetry:
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.lang.RuntimeException
+          - java.util.concurrent.TimeoutException
+        max-attempts: 3
+        waitDuration: 500ms
+
+
+  ratelimiter:
+    instances:
+      scrapperRateLimiter:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0ms
+
+  timelimiter:
+    instances:
+      scrapperTimeLimiter:
+        timeout-duration: 500ms
+        cancel-running-future: true
