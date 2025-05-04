@@ -5,8 +5,10 @@ app:
     access-token: ${SO_ACCESS_TOKEN}
 
 
+
 messaging:
   message-transport: HTTP # HTTP \ Kafka
+  requestPerSecond: 5
 
 domains:
   github: "https://api.github.com"
@@ -16,19 +18,24 @@ domains:
 
 resilience4j:
   circuitbreaker:
+    circuit-breaker-aspect-order: 1 #//не уверен в каком порядке применять их
     instances:
       telegramCircuitBreaker:
-        slidingWindowSize: 1
-        minimumRequiredCalls: 1
-        failureRateThreshold: 100
-        permittedCallsInHalfOpenState: 1
-        waitDurationInOpenState: "1s"
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+
+        waitDurationInOpenState: "3s"
         slidingWindowType: COUNT_BASED
+        permittedNumberOfCallsInHalfOpenState: 2
+
 
   retry:
+    retryAspectOrder: 2
     instances:
       telegramRetry:
-        maxRetryAttempts: 3
+        max-attempts: 3
         waitDuration: 100ms
 
   ratelimiter:
@@ -37,6 +44,12 @@ resilience4j:
         limitForPeriod: 10
         limitRefreshPeriod: 1s
         timeoutDuration: 0ms
+
+  timelimiter:
+    instances:
+      telegramTimeLimiter:
+        timeout-duration: 500ms
+        cancel-running-future: true
 
 scheduler:
   delay: 5s

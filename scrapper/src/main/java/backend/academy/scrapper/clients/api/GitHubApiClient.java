@@ -1,7 +1,7 @@
 package backend.academy.scrapper.clients.api;
 
-import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.config.DomainsConfig;
+import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.dto.git.GitHubIssueDto;
 import backend.academy.scrapper.dto.git.GitHubPullRequestDto;
 import backend.academy.scrapper.dto.git.GitHubResponseDto;

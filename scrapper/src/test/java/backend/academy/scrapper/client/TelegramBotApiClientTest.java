@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import backend.academy.scrapper.DomainsConfig;
 import backend.academy.scrapper.clients.mesaging.http.HttpMessageSender;
+import backend.academy.scrapper.config.DomainsConfig;
 import backend.academy.scrapper.dto.LinkUpdate;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.List;

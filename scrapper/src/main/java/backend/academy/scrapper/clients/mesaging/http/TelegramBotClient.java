@@ -22,6 +22,7 @@ public class TelegramBotClient implements IClient {
     @Override
     public boolean send(LinkUpdate update) {
         try {
+            log.info("Sending link update: {}", update);
             ResponseEntity<Void> response = httpMessageSender.sendMessage(update);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {

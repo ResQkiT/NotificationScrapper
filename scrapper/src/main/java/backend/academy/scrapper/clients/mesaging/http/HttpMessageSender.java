@@ -1,6 +1,6 @@
 package backend.academy.scrapper.clients.mesaging.http;
 
-import backend.academy.scrapper.DomainsConfig;
+import backend.academy.scrapper.config.DomainsConfig;
 import backend.academy.scrapper.dto.LinkUpdate;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;

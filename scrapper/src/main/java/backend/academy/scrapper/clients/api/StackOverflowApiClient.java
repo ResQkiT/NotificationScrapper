@@ -1,7 +1,7 @@
 package backend.academy.scrapper.clients.api;
 
-import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.ScrapperConfig;
+import backend.academy.scrapper.config.DomainsConfig;
+import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswersListDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentsListDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;

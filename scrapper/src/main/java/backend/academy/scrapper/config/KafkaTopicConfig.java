@@ -1,4 +1,4 @@
-package backend.academy.scrapper;
+package backend.academy.scrapper.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;

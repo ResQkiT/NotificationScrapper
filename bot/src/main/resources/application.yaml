@@ -11,6 +11,8 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  requestPerSecond: 5
+
   caching: true
 
   redis:
@@ -47,25 +49,27 @@ spring:
 domains:
   scrapper: "http://localhost:8081"
 
-messaging:
-  message-transport: Kafka # HTTP \ Kafka
-
 resilience4j:
   circuitbreaker:
+    circuitBreakerAspectOrder: 1 #//не уверен в каком порядке применять их
     instances:
       scrapperCircuitBreaker:
+        registerHealthIndicator: true
         slidingWindowSize: 10
-        minimumRequiredCalls: 5
+        minimumNumberOfCalls: 5
         failureRateThreshold: 50
-        permittedCallsInHalfOpenState: 1
-        waitDurationInOpenState: "1s"
+
+        waitDurationInOpenState: "3s"
         slidingWindowType: COUNT_BASED
+        permittedNumberOfCallsInHalfOpenState: 2
 
   retry:
+    retryAspectOrder: 2
     instances:
       scrapperRetry:
-        maxRetryAttempts: 3
+        max-attempts: 3
         waitDuration: 100ms
+
 
   ratelimiter:
     instances:
@@ -74,7 +78,11 @@ resilience4j:
         limitRefreshPeriod: 1s
         timeoutDuration: 0ms
 
-
+  timelimiter:
+    instances:
+      scrapperTimeLimiter:
+        timeout-duration: 500ms
+        cancel-running-future: true
 server:
   port: 8080
 
