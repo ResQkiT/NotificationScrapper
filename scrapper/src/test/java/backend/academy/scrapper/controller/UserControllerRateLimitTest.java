@@ -20,7 +20,7 @@ public class UserControllerRateLimitTest {
 
     @Test
     public void testRateLimiting() throws Exception {
-        String ip = "192.168.1.1";
+        String ip = "192.168.1.10";
 
         mockMvc.perform(post("/tg-chat/1").header("X-Forwarded-For", ip)).andExpect(status().isOk());
 

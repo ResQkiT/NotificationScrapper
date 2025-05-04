@@ -1,7 +1,11 @@
 spring:
   jpa:
-  hibernate:
-    ddl-auto: none
+    hibernate:
+      ddl-auto: none
+
+db:
+  access-type: JPA
+
 messaging:
   requestPerSecond: 10
 
