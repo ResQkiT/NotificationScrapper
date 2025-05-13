@@ -7,7 +7,7 @@ db:
   access-type: JPA
 
 messaging:
-  requestPerSecond: 10
+  requestPerSecond: 1
 
 resilience4j:
   circuitbreaker:
