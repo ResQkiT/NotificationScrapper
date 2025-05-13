@@ -8,6 +8,8 @@ import java.util.*;
 public interface LinkRepository {
     Link addLink(Long userId, AddLinkRequest linkRequest);
 
+    Optional<Link> findLinkById(Long linkId);
+
     boolean hasLink(Long userId, String url);
 
     Link removeLink(Long userId, String url);

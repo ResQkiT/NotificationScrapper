@@ -1,6 +1,6 @@
 package backend.academy.scrapper.processor;
 
-import backend.academy.scrapper.clients.StackOverflowClient;
+import backend.academy.scrapper.clients.api.StackOverflowApiClient;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswerDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswersListDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentDto;
@@ -8,7 +8,7 @@ import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentsListDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowResponseDto;
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.model.StackOverflowLink;
-import backend.academy.scrapper.service.ILinkService;
+import backend.academy.scrapper.service.LinkService;
 import backend.academy.scrapper.service.StackOverflowLinkService;
 import java.net.URI;
 import java.time.ZoneOffset;
@@ -19,12 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class StackOverflowProcessor extends Processor {
 
-    private final StackOverflowClient stackOverflowClient;
+    private final StackOverflowApiClient stackOverflowClient;
     private final StackOverflowLinkService stackOverflowLinkService;
 
     public StackOverflowProcessor(
-            StackOverflowClient stackOverflowClient,
-            ILinkService linkService,
+            StackOverflowApiClient stackOverflowClient,
+            LinkService linkService,
             StackOverflowLinkService stackOverflowLinkService) {
         super("stackoverflow.com", linkService);
         this.stackOverflowClient = stackOverflowClient;
@@ -45,7 +45,6 @@ public class StackOverflowProcessor extends Processor {
         }
 
         StackOverflowLink relevantLink = buildRelevantLink(link, lastAnswer, lastComment);
-
         return handleUpdates(link, relevantLink, lastAnswer, lastComment);
     }
 
@@ -54,49 +53,49 @@ public class StackOverflowProcessor extends Processor {
             StackOverflowLink newLink,
             Optional<StackOverflowAnswerDto> lastAnswer,
             Optional<StackOverflowCommentDto> lastComment) {
-        StringBuilder response = new StringBuilder();
-        System.out.println(newLink);
-        if (isFirstTimeProcessing(link)) {
-            System.out.println("ТРогаем впервый раз");
-            updateOrSave(newLink);
-            touchLink(link);
-            return null;
-        }
 
+        StringBuilder response = new StringBuilder();
+        boolean hasUpdates = false;
         StackOverflowLink existingLink =
                 stackOverflowLinkService.findById(link.id()).orElse(null);
 
-        if (existingLink == null) {
+        if (isFirstTimeProcessing(link) || existingLink == null) {
+            stackOverflowLinkService.createLink(newLink);
+            service().onUpdateLink(link);
+            service().onTouchLink(link);
             return null;
         }
 
-        lastAnswer.ifPresent(a -> {
-            if (!Objects.equals(a.answerId(), existingLink.answerLastId())) {
-                updateOrSave(newLink);
+        if (lastAnswer.isPresent()) {
+            StackOverflowAnswerDto answer = lastAnswer.get();
+            if (!Objects.equals(answer.answerId(), existingLink.answerLastId())) {
                 response.append("Появился новый ответ\n");
-                response.append("Автор: " + a.owner().displayName() + "\n");
-                response.append("Дата создания: " + a.createdAt() + "\n");
-                response.append("Описание: ").append(cutBody(a.body())).append("\n");
+                response.append("Автор: " + answer.owner().displayName() + "\n");
+                response.append("Дата создания: " + answer.createdAt() + "\n");
+                response.append("Описание: ").append(cutBody(answer.body())).append("\n");
+                hasUpdates = true;
             }
-        });
-
-        lastComment.ifPresent(c -> {
-            if (!Objects.equals(c.commendId(), existingLink.commentId())) {
-                updateOrSave(newLink);
-                response.append("Появился новый комментарий\n");
-                response.append("Автор: " + c.owner().displayName() + "\n");
-                response.append("Дата создания: " + c.createdAt() + "\n");
-                response.append("Описание: ").append(cutBody(c.body())).append("\n");
-            }
-        });
-
-        if (!response.isEmpty()) {
-            updateOrSave(newLink);
-            touchLink(link);
-            return response.toString();
         }
 
-        touchLink(link);
+        if (lastComment.isPresent()) {
+            StackOverflowCommentDto comment = lastComment.get();
+            if (!Objects.equals(comment.commendId(), existingLink.commentId())) {
+                response.append("Появился новый комментарий\n");
+                response.append("Автор: " + comment.owner().displayName() + "\n");
+                response.append("Дата создания: " + comment.createdAt() + "\n");
+                response.append("Описание: ").append(cutBody(comment.body())).append("\n");
+                hasUpdates = true;
+            }
+        }
+
+        if (hasUpdates) {
+            stackOverflowLinkService.updateLink(newLink);
+            service().onTouchLink(link);
+            service().onUpdateLink(link);
+            return response.toString();
+        }
+        service().onTouchLink(link);
+
         return null;
     }
 
@@ -122,14 +121,6 @@ public class StackOverflowProcessor extends Processor {
         });
 
         return stackOverflowLink;
-    }
-
-    private void updateOrSave(StackOverflowLink link) {
-        if (stackOverflowLinkService.findById(link.id()).isPresent()) {
-            stackOverflowLinkService.updateLink(link);
-        } else {
-            stackOverflowLinkService.createLink(link);
-        }
     }
 
     private Optional<StackOverflowAnswerDto> getLastAnswer(StackOverflowAnswersListDto dto) {

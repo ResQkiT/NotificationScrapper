@@ -2,7 +2,6 @@ package backend.academy.scrapper.repository.sql;
 
 import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.model.StackOverflowLink;
-import backend.academy.scrapper.repository.LinkRepository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
@@ -11,16 +10,16 @@ import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional
 public class SqlStackoverflowLinkRepository {
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<StackOverflowLink> rowMapper = new StackoverflowLinkRowMapper();
-    private final LinkRepository linkRepository;
 
-    public SqlStackoverflowLinkRepository(JdbcTemplate jdbcTemplate, LinkRepository linkRepository) {
+    public SqlStackoverflowLinkRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.linkRepository = linkRepository;
     }
 
     public Link save(StackOverflowLink link) {

@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.ScrapperConfig;
-import backend.academy.scrapper.clients.GitHubClient;
+import backend.academy.scrapper.clients.api.GitHubApiClient;
+import backend.academy.scrapper.config.DomainsConfig;
+import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.dto.git.GitHubIssueDto;
 import backend.academy.scrapper.dto.git.GitHubPullRequestDto;
 import backend.academy.scrapper.dto.git.GitHubResponseDto;
@@ -21,9 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 @WireMockTest(httpPort = 8089)
-class GitHubClientTest {
+class GitHubApiClientTest {
 
-    private GitHubClient gitHubClient;
+    private GitHubApiClient gitHubClient;
 
     @BeforeEach
     void setUp() {
@@ -33,7 +33,7 @@ class GitHubClientTest {
         DomainsConfig domainsConfig = new DomainsConfig("http://localhost:8089", "", "", "");
 
         RestClient.Builder restClientBuilder = RestClient.builder();
-        gitHubClient = new GitHubClient(restClientBuilder, scrapperConfig, domainsConfig);
+        gitHubClient = new GitHubApiClient(restClientBuilder, scrapperConfig, domainsConfig);
     }
 
     @Test

@@ -22,31 +22,31 @@ import lombok.experimental.Accessors;
 @PrimaryKeyJoinColumn(name = "link_id") // Связь с основной таблицей links
 public class GitHubLink extends Link {
 
-    @Column(name = "issue_last_id", nullable = false)
+    @Column(name = "issue_last_id")
     private Long lastIssueId;
 
-    @Column(name = "issue_title", nullable = false)
+    @Column(name = "issue_title")
     private String lastIssueTitle;
 
-    @Column(name = "issue_creator_username", nullable = false)
+    @Column(name = "issue_creator_username")
     private String issueCreatorUsername;
 
-    @Column(name = "issue_created_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "issue_created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime issueCreatedAt;
 
     @Column(name = "issue_preview_description", length = 200)
     private String issuePreviewDescription;
 
-    @Column(name = "pull_last_id", nullable = false)
+    @Column(name = "pull_last_id")
     private Long lastPullRequestId;
 
-    @Column(name = "pull_title", nullable = false)
+    @Column(name = "pull_title")
     private String lastPullRequestTitle;
 
-    @Column(name = "pull_creator_username", nullable = false)
+    @Column(name = "pull_creator_username")
     private String pullCreatorUsername;
 
-    @Column(name = "pull_created_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "pull_created_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime pullCreatedAt;
 
     @Column(name = "pull_preview_description", length = 200)

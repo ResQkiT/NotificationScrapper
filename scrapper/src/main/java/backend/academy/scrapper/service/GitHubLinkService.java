@@ -5,42 +5,44 @@ import backend.academy.scrapper.model.Link;
 import backend.academy.scrapper.repository.sql.SqlGithubLinkRepository;
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
+@Transactional
 public class GitHubLinkService {
-    private final SqlGithubLinkRepository repository;
+    private final SqlGithubLinkRepository githubLinkRepository;
+    private final LinkService linkService;
 
-    @Transactional
+    @Autowired
+    public GitHubLinkService(SqlGithubLinkRepository githubLinkRepository, LinkService linkService) {
+        this.githubLinkRepository = githubLinkRepository;
+        this.linkService = linkService;
+    }
+
     public Link createLink(GitHubLink link) {
-        return repository.save(link);
+        return githubLinkRepository.save(link);
     }
 
-    @Transactional
     public GitHubLink updateLink(GitHubLink link) {
-        return repository.update(link);
+        return githubLinkRepository.update(link);
     }
 
-    @Transactional(readOnly = true)
     public Optional<GitHubLink> findById(Long id) {
-        return repository.findByParentId(id);
+        return githubLinkRepository.findByParentId(id);
     }
 
-    @Transactional
     public void deleteLink(Long id) {
-        repository.deleteByParentId(id);
+        githubLinkRepository.deleteByParentId(id);
     }
 
-    @Transactional(readOnly = true)
     public List<GitHubLink> findAllLinks() {
-        return repository.findAll();
+        return githubLinkRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     public boolean existsByUrl(String url) {
-        return repository.findAll().stream().anyMatch(link -> link.url().equals(url));
+        return githubLinkRepository.findAll().stream()
+                .anyMatch(link -> link.url().equals(url));
     }
 }

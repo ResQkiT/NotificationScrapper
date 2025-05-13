@@ -25,25 +25,25 @@ import lombok.experimental.Accessors;
 @PrimaryKeyJoinColumn(name = "link_id") // Связь с основной таблицей links
 public class StackOverflowLink extends Link {
 
-    @Column(name = "answer_last_id", nullable = false)
+    @Column(name = "answer_last_id")
     private Long answerLastId;
 
-    @Column(name = "answer_last_username", nullable = false, length = 100)
+    @Column(name = "answer_last_username", length = 100)
     private String answerLastUsername;
 
-    @Column(name = "answer_created_at", nullable = false)
+    @Column(name = "answer_created_at")
     private OffsetDateTime answerCreatedAt;
 
     @Column(name = "answer_preview_description", length = 200)
     private String answerPreviewDescription;
 
-    @Column(name = "comment_id", nullable = false)
+    @Column(name = "comment_id")
     private Long commentId;
 
-    @Column(name = "comment_last_username", nullable = false, length = 100)
+    @Column(name = "comment_last_username", length = 100)
     private String commentLastUsername;
 
-    @Column(name = "comment_created_at", nullable = false)
+    @Column(name = "comment_created_at")
     private OffsetDateTime commentCreatedAt;
 
     @Column(name = "comment_preview_description", length = 200)

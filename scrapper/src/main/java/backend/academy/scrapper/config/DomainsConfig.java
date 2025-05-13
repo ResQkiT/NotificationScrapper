@@ -1,4 +1,4 @@
-package backend.academy.scrapper;
+package backend.academy.scrapper.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

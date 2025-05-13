@@ -12,9 +12,14 @@
 Проект написан на `Java 23` с использованием `Spring Boot 3`.
 
 Проект состоит из 2-х приложений:
-* Bot
-* Scrapper
+* BotApplication
+* ScrapperApplication
 
-Для работы требуется БД `PostgreSQL`. Присутствует опциональная зависимость на `Kafka`.
-
-Для дополнительной справки: [HELP.md](./HELP.md)
+Инструкция по запуску:
+1) Убедиться что запущен Docker Engine
+2) `docker-compose up` - запустит необходимые сервисы
+3) Убедиться что в переменных окружения есть.  
+Для ScrapperApplication: `SO_TOKEN_KEY` `SO_ACCESS_TOKEN` `GITHUB_TOKEN`
+Для BotApplication: `TELEGRAM_TOKEN`
+4) Запустить сервисы поочереди из IntelliJ IDEA
+5) Вы великолепны!

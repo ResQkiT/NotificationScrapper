@@ -1,6 +1,6 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.clients.ScrapperClient;
+import backend.academy.bot.clients.IClient;
 import backend.academy.bot.dto.LinkResponse;
 import backend.academy.bot.dto.ListLinksResponse;
 import backend.academy.bot.entity.Link;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ListCommand extends Command {
 
-    private final ScrapperClient scrapperClient;
+    private final IClient scrapperClient;
 
     @Autowired
-    public ListCommand(ScrapperClient scrapperClient) {
+    public ListCommand(IClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 
@@ -47,12 +47,8 @@ public class ListCommand extends Command {
                 session.trackedLinks(links);
             }
         } else {
-            // Если сервер не отвечает или мы получили невалидный ответ попробуем восстановить из котекста
-
             links = session.trackedLinks();
-            // нужно отправить на сервер информацию о том что ссылки восстановлены из контекста
         }
-        // локальная копия, может быть удалена
 
         if (links.isEmpty()) {
             sendMessage(session.chatId(), "Сейчас у вас нет отслеживаемых ссылок!");

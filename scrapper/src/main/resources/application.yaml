@@ -4,14 +4,64 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
+
+
+messaging:
+  message-transport: HTTP # HTTP \ Kafka
+  requestPerSecond: 10
+
 domains:
   github: "https://api.github.com"
   stackoverflow: "https://api.stackexchange.com/2.3"
   bot: "http://localhost:8090"
   telegram-bot-url: "http://localhost:8080"
 
+resilience4j:
+  circuitbreaker:
+    circuit-breaker-aspect-order: 1 #//не уверен в каком порядке применять их
+    instances:
+      telegramCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+
+        waitDurationInOpenState: "3s"
+        slidingWindowType: COUNT_BASED
+        permittedNumberOfCallsInHalfOpenState: 2
+
+
+  retry:
+    retryAspectOrder: 2
+    instances:
+      telegramRetry:
+        max-attempts: 3
+        waitDuration: 100ms
+
+  ratelimiter:
+    instances:
+      telegramRateLimiter:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+        timeoutDuration: 0ms
+
+  timelimiter:
+    instances:
+      telegramTimeLimiter:
+        timeout-duration: 500ms
+        cancel-running-future: true
+
+scheduler:
+  delay: 5s
+  fixed-delay: 5s
+
 db:
-  access-type: SQL # JPA или SQL
+  access-type: JPA # JPA или SQL
+
+#logging:
+#  structured:
+#    format:
+#      console : none
 
 spring:
   application:
@@ -27,6 +77,29 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        acks: all
+    topics:
+      link-update:
+        name: link-updates-topic
+        partitions: 3
+        replicas: 1
+
+    admin:
+      properties:
+        bootstrap.servers: localhost:9092
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
 
 server:
   port: 8081

@@ -1,6 +1,6 @@
 package backend.academy.bot.commands;
 
-import backend.academy.bot.clients.ScrapperClient;
+import backend.academy.bot.clients.IClient;
 import backend.academy.bot.dto.AddLinkRequest;
 import backend.academy.bot.entity.Link;
 import backend.academy.bot.entity.Session;
@@ -15,8 +15,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class TrackLinkCommand extends Command {
-
-    private final ScrapperClient scrapperClient;
+    private final IClient scrapperClient;
 
     private static final Pattern STACKOVERFLOW_PATTERN =
             Pattern.compile("^https?://(?:www\\.|ru\\.)?stackoverflow\\.com/questions/\\d+/.*");
@@ -25,7 +24,7 @@ public class TrackLinkCommand extends Command {
             Pattern.compile("^https?://(?:www\\.)?github\\.com/[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+/?$");
 
     @Autowired
-    public TrackLinkCommand(ScrapperClient scrapperClient) {
+    public TrackLinkCommand(IClient scrapperClient) {
         this.scrapperClient = scrapperClient;
     }
 

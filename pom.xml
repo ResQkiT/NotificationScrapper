@@ -130,6 +130,16 @@
                 <artifactId>bucket4j-spring-boot-starter</artifactId>
                 <version>${bucket4j-spring-boot-starter.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>${error-prone.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>${checker-qual.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -376,6 +386,10 @@
                     <version>${modernizer-maven-plugin.version}</version>
                     <configuration>
                         <javaVersion>${java.version}</javaVersion>
+                        <exclusions>
+
+                            <exclusion>java.util.Optional.get</exclusion>
+                        </exclusions>
                     </configuration>
                 </plugin>
                 <plugin>

@@ -1,9 +1,13 @@
 package backend.academy.bot;
 
+import backend.academy.bot.config.BotConfig;
+import backend.academy.bot.config.DomainsConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.kafka.annotation.EnableKafka;
 
+@EnableKafka
 @SpringBootApplication
 @EnableConfigurationProperties({BotConfig.class, DomainsConfig.class})
 public class BotApplication {

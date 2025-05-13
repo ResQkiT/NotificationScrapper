@@ -11,8 +11,81 @@ spring:
       ddl-auto: validate
     open-in-view: false
 
+  requestPerSecond: 5
+
+  caching: true
+
+  redis:
+    host: localhost
+    port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      group-id: scrapper-link-update-consumers
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: backend.academy.bot.dto.IncomingUpdate
+        spring.json.trusted.packages: java.util,java.lang,backend.academy.bot.dto
+        spring.json.ignore.unknown.tokens: true
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    topics:
+      link-update:
+        name: "link-updates-topic"
+      link-update-dlq:
+        name: link-updates.DLQ
+
+    listener:
+      errorHandler: method
+
 domains:
   scrapper: "http://localhost:8081"
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      scrapperCircuitBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50
+
+        waitDurationInOpenState: "3s"
+        slidingWindowType: COUNT_BASED
+        permittedNumberOfCallsInHalfOpenState: 2
+
+  retry:
+    instances:
+      scrapperRetry:
+        retryExceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.lang.RuntimeException
+          - java.util.concurrent.TimeoutException
+        max-attempts: 3
+        waitDuration: 500ms
+
+
+  ratelimiter:
+    instances:
+      scrapperRateLimiter:
+        limitForPeriod: 5
+        limitRefreshPeriod: 1s
+        timeoutDuration: 100ms
+
+  timelimiter:
+    instances:
+      scrapperTimeLimiter:
+        timeout-duration: 500ms
+        cancel-running-future: true
 
 server:
   port: 8080

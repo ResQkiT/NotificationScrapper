@@ -3,9 +3,9 @@ package backend.academy.bot.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-import backend.academy.bot.controllers.WebController;
 import backend.academy.bot.dto.IncomingUpdate;
 import backend.academy.bot.events.SendMessageEvent;
+import backend.academy.bot.messaging.http.WebController;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,6 @@ class WebControllerTest {
         IncomingUpdate update = new IncomingUpdate(1L, "https://example.com", "описание", List.of(12345L));
 
         webController.update(update);
-        System.out.println("ГОЙДААА");
         ArgumentCaptor<SendMessageEvent> eventCaptor = ArgumentCaptor.forClass(SendMessageEvent.class);
 
         verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());

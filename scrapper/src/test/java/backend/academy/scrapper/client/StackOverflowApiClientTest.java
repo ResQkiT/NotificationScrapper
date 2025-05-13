@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import backend.academy.scrapper.DomainsConfig;
-import backend.academy.scrapper.ScrapperConfig;
-import backend.academy.scrapper.clients.StackOverflowClient;
+import backend.academy.scrapper.clients.api.StackOverflowApiClient;
+import backend.academy.scrapper.config.DomainsConfig;
+import backend.academy.scrapper.config.ScrapperConfig;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswerDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowAnswersListDto;
 import backend.academy.scrapper.dto.stackoverflow.StackOverflowCommentDto;
@@ -23,8 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 @WireMockTest(httpPort = 8089)
-public class StackOverflowClientTest {
-    private StackOverflowClient stackOverflowClient;
+public class StackOverflowApiClientTest {
+    private StackOverflowApiClient stackOverflowClient;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +39,7 @@ public class StackOverflowClientTest {
         DomainsConfig domainsConfig = new DomainsConfig("", "http://localhost:8089", "", "");
 
         RestClient.Builder restClientBuilder = RestClient.builder();
-        stackOverflowClient = new StackOverflowClient(restClientBuilder, scrapperConfig, domainsConfig);
+        stackOverflowClient = new StackOverflowApiClient(restClientBuilder, scrapperConfig, domainsConfig);
     }
 
     @Test
