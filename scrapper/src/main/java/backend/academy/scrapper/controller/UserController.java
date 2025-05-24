@@ -2,6 +2,7 @@ package backend.academy.scrapper.controller;
 
 import backend.academy.scrapper.exeptions.ScrapperException;
 import backend.academy.scrapper.service.UserService;
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

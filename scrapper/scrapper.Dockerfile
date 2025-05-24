@@ -1,19 +1,19 @@
-
-FROM maven:3.8.6-eclipse-temurin-17 AS build
+FROM maven:3.9.9-eclipse-temurin-23 AS build
 
 WORKDIR /app
 
-COPY pom.xml ./
-RUN mvn dependency:resolve
+COPY pom.xml .
+COPY lombok.config .
 
-COPY src ./src
+COPY scrapper/ ./scrapper/
 
-RUN mvn clean install -X
+RUN mvn clean install -f scrapper/pom.xml -DskipTests -e -X
 
 FROM openjdk:23-jdk-slim
 
-COPY --from=build /app/target/*.jar /app.jar
+COPY --from=build /app/scrapper/target/*.jar /app.jar
 
-EXPOSE 8080
+EXPOSE 8081
+EXPOSE 8082
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]

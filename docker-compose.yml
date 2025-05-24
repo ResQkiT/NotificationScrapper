@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+
+  scrapper:
+    container_name: "scrapper_service"
+    build:
+      context: .
+      dockerfile: scrapper/scrapper.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+    networks:
+      - backend
+
+
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1
     container_name: zookeeper
@@ -42,6 +59,11 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: scrapper_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d scrapper_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
     volumes:

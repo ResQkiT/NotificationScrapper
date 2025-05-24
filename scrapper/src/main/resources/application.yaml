@@ -4,6 +4,13 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 
 messaging:
@@ -67,7 +74,7 @@ spring:
   application:
     name: Scrapper
   datasource:
-    url: jdbc:postgresql://localhost:5432/scrapper_db
+    url: jdbc:postgresql://postgres:5432/scrapper_db
     username: admin
     password: secret
     driver-class-name: org.postgresql.Driver
@@ -79,7 +86,7 @@ spring:
     open-in-view: false
 
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -93,7 +100,7 @@ spring:
 
     admin:
       properties:
-        bootstrap.servers: localhost:9092
+        bootstrap.servers: kafka:9092
 
   jackson:
     serialization:
