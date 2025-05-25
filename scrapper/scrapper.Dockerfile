@@ -7,7 +7,7 @@ COPY lombok.config .
 
 COPY scrapper/ ./scrapper/
 
-RUN mvn clean install -f scrapper/pom.xml -DskipTests -e -X
+RUN mvn clean install -f scrapper/pom.xml -DskipTests -e
 
 FROM openjdk:23-jdk-slim
 

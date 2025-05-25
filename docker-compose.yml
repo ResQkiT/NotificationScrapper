@@ -13,10 +13,27 @@ services:
     ports:
       - "8081:8081"
       - "8082:8082"
+
+    env_file:
+      - .env
+
     networks:
       - backend
 
-
+  bot:
+    container_name: "bot_service"
+    build:
+      context: .
+      dockerfile: bot/bot.Dockerfile
+    depends_on:
+      - redis
+      - scrapper
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - backend
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1

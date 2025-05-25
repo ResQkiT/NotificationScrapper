@@ -20,8 +20,8 @@ messaging:
 domains:
   github: "https://api.github.com"
   stackoverflow: "https://api.stackexchange.com/2.3"
-  bot: "http://localhost:8090"
-  telegram-bot-url: "http://localhost:8080"
+  bot: "http://bot:8090"
+  telegram-bot-url: "http://bot:8080"
 
 resilience4j:
   circuitbreaker:
