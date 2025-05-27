@@ -79,6 +79,9 @@ public class SqlStackoverflowLinkRepository {
                 "SELECT l.id, l.url, sl.* FROM links l " + "JOIN stackoverflow_links sl ON l.id = sl.link_id",
                 rowMapper);
     }
+    public long count() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM stackoverflow_links", Long.class);
+    }
 
     private static class StackoverflowLinkRowMapper implements RowMapper<StackOverflowLink> {
         @Override

@@ -12,6 +12,15 @@ management:
       exposure:
         include: "*"
 
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        app:
+          scrape:
+            duration: true
 
 messaging:
   message-transport: HTTP # HTTP \ Kafka
@@ -115,3 +124,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+
+metrics:
+  database-scheduler-delay: 5s
