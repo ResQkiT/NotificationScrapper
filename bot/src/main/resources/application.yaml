@@ -15,10 +15,6 @@ spring:
 
   caching: true
 
-  redis:
-    host: ${SPRING_REDIS_HOST:redis}
-    port: ${SPRING_REDIS_PORT:6379}
-
   kafka:
     bootstrap-servers: kafka:9092
     consumer:
@@ -45,6 +41,11 @@ spring:
 
     listener:
       errorHandler: method
+
+  data:
+    redis:
+      host: redis
+      port: 6379
 
 domains:
   scrapper: "http://scrapper:8081"
