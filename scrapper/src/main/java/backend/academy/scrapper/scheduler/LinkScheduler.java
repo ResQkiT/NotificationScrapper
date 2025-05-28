@@ -5,10 +5,9 @@ import backend.academy.scrapper.dto.LinkUpdate;
 import backend.academy.scrapper.model.User;
 import backend.academy.scrapper.processor.Processor;
 import backend.academy.scrapper.service.LinkService;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import io.micrometer.core.annotation.Timed;
+import java.time.Duration;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,10 +26,11 @@ public class LinkScheduler {
     @Value("${scheduler.delay}")
     private Duration schedulerDelay;
 
-    @Timed(value = "app.scheduler.link.execution",
-        description = "Time taken to execute link scheduler",
-        percentiles = {0.5, 0.95, 0.99},
-        histogram = true)
+    @Timed(
+            value = "app.scheduler.link.execution",
+            description = "Time taken to execute link scheduler",
+            percentiles = {0.5, 0.95, 0.99},
+            histogram = true)
     @Scheduled(fixedDelayString = "${scheduler.fixed-delay}")
     public void execute() {
         linkService.getAllLinksWithDelay(schedulerDelay).forEach(link -> {

@@ -16,9 +16,11 @@
 * ScrapperApplication
 
 ### Мы переезжаем в контейнер!
+
 Новая инструкция по запуску:
 1. Убедиться что запущен Docker Engine
 2. Создайте файл <code>.env'</code> со следующим содержанием:
+
 ```
 GITHUB_TOKEN="your git hub token"
 SO_ACCESS_TOKEN="your s.o. access token"
@@ -29,6 +31,8 @@ TELEGRAM_TOKEN="your bot telegram token"
 SPRING_REDIS_HOST=redis
 SPRING_REDIS_PORT=6379
 ```
-3. `docker-compose build` - соберет необходимые сервисы 
-4. `docker-compose up` - запустит все сервисы 
+
+3. `docker-compose build` - соберет необходимые сервисы
+4. `docker-compose up` - запустит все сервисы
 5. Вы великолепны!
+
