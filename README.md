@@ -36,3 +36,7 @@ SPRING_REDIS_PORT=6379
 4. `docker-compose up` - запустит все сервисы
 5. Вы великолепны!
 
+## P.S
+Prometeus будет доступен на: `http://localhost:9090/query`
+
+Grafana будет доступна на: `http://localhost:3000`

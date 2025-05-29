@@ -22,6 +22,11 @@ management:
           scrape:
             duration: true
 
+      percentiles:
+        tasks:
+          scheduled:
+            execution: 0.05,0.95,0.99
+
 messaging:
   message-transport: HTTP # HTTP \ Kafka
   requestPerSecond: 10
