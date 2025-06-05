@@ -41,6 +41,10 @@ public class GitHubLinkService {
         return githubLinkRepository.findAll();
     }
 
+    public Long countLinks() {
+        return githubLinkRepository.count();
+    }
+
     public boolean existsByUrl(String url) {
         return githubLinkRepository.findAll().stream()
                 .anyMatch(link -> link.url().equals(url));

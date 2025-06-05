@@ -1,6 +1,40 @@
 version: '3.8'
 
 services:
+
+  scrapper:
+    container_name: "scrapper_service"
+    build:
+      context: .
+      dockerfile: scrapper/scrapper.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+
+    env_file:
+      - .env
+
+    networks:
+      - backend
+
+  bot:
+    container_name: "bot_service"
+    build:
+      context: .
+      dockerfile: bot/bot.Dockerfile
+    depends_on:
+      - redis
+      - scrapper
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - backend
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1
     container_name: zookeeper
@@ -42,6 +76,11 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: scrapper_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d scrapper_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - "5432:5432"
     volumes:
@@ -76,9 +115,33 @@ services:
     networks:
       - backend
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: secret
+    networks:
+      - backend
+
 volumes:
   postgres_data:
   redis_data:
+  grafana_data:
 
 networks:
   backend:

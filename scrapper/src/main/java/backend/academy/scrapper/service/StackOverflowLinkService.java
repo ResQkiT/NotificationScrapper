@@ -42,6 +42,10 @@ public class StackOverflowLinkService {
         return stackoverflowLinkRepository.findAll();
     }
 
+    public Long countLinks() {
+        return stackoverflowLinkRepository.count();
+    }
+
     public boolean existsByUrl(String url) {
         return stackoverflowLinkRepository.findAll().stream()
                 .anyMatch(link -> link.url().equals(url));

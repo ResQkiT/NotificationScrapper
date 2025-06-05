@@ -4,7 +4,28 @@ app:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+        app:
+          scrape:
+            duration: true
+
+      percentiles:
+        tasks:
+          scheduled:
+            execution: 0.05,0.95,0.99
 
 messaging:
   message-transport: HTTP # HTTP \ Kafka
@@ -13,8 +34,8 @@ messaging:
 domains:
   github: "https://api.github.com"
   stackoverflow: "https://api.stackexchange.com/2.3"
-  bot: "http://localhost:8090"
-  telegram-bot-url: "http://localhost:8080"
+  bot: "http://bot:8090"
+  telegram-bot-url: "http://bot:8080"
 
 resilience4j:
   circuitbreaker:
@@ -67,7 +88,7 @@ spring:
   application:
     name: Scrapper
   datasource:
-    url: jdbc:postgresql://localhost:5432/scrapper_db
+    url: jdbc:postgresql://postgres:5432/scrapper_db
     username: admin
     password: secret
     driver-class-name: org.postgresql.Driver
@@ -79,7 +100,7 @@ spring:
     open-in-view: false
 
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -93,7 +114,7 @@ spring:
 
     admin:
       properties:
-        bootstrap.servers: localhost:9092
+        bootstrap.servers: kafka:9092
 
   jackson:
     serialization:
@@ -108,3 +129,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+
+metrics:
+  database-scheduler-delay: 5s

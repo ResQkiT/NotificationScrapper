@@ -84,6 +84,10 @@ public class SqlGithubLinkRepository {
                 "SELECT l.id, l.url, gl.* FROM links l " + "JOIN github_links gl ON l.id = gl.link_id", rowMapper);
     }
 
+    public long count() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM github_links", Long.class);
+    }
+
     private static class GithubLinkRowMapper implements RowMapper<GitHubLink> {
         @Override
         public GitHubLink mapRow(ResultSet rs, int rowNum) throws SQLException {

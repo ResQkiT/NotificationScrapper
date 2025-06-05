@@ -80,6 +80,10 @@ public class SqlStackoverflowLinkRepository {
                 rowMapper);
     }
 
+    public long count() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM stackoverflow_links", Long.class);
+    }
+
     private static class StackoverflowLinkRowMapper implements RowMapper<StackOverflowLink> {
         @Override
         public StackOverflowLink mapRow(ResultSet rs, int rowNum) throws SQLException {
